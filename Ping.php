@@ -24,17 +24,17 @@
 require_once "PEAR.php";
 require_once "OS/Guess.php";
 
-define('PING_FAILED_MSG', 'execution of ping failed');
-define('PING_HOST_NOT_FOUND_MSG', 'unknown host');
-define('PING_INVALID_ARGUMENTS_MSG', 'invalid argument array');
-define('PING_CANT_LOCATE_PING_BINARY_MSG', 'unable to locate the ping binary');
-define('PING_RESULT_UNSUPPORTED_BACKEND_MSG', 'Backend not Supported');
+define('NET_PING_FAILED_MSG', 'execution of ping failed');
+define('NET_PING_HOST_NOT_FOUND_MSG', 'unknown host');
+define('NET_PING_INVALID_ARGUMENTS_MSG', 'invalid argument array');
+define('NET_PING_CANT_LOCATE_PING_BINARY_MSG', 'unable to locate the ping binary');
+define('NET_PING_RESULT_UNSUPPORTED_BACKEND_MSG', 'Backend not Supported');
 
-define('PING_FAILED',                     0);
-define('PING_HOST_NOT_FOUND',             1);
-define('PING_INVALID_ARGUMENTS',          2);
-define('PING_CANT_LOCATE_PING_BINARY',    3);
-define('PING_RESULT_UNSUPPORTED_BACKEND', 4);
+define('NET_PING_FAILED',                     0);
+define('NET_PING_HOST_NOT_FOUND',             1);
+define('NET_PING_INVALID_ARGUMENTS',          2);
+define('NET_PING_CANT_LOCATE_PING_BINARY',    3);
+define('NET_PING_RESULT_UNSUPPORTED_BACKEND', 4);
 
 /**************************TODO*******************************************/
 /*
@@ -154,8 +154,8 @@ class Net_Ping
         $sysname   = $OS_Guess->getSysname();
         $ping_path = '';
 
-        if (($ping_path = Net_Ping::_setPingPath($sysname)) == PING_CANT_LOCATE_PING_BINARY) {
-            return PEAR::throwError(PING_CANT_LOCATE_PING_BINARY_MSG, PING_CANT_LOCATE_PING_BINARY);
+        if (($ping_path = Net_Ping::_setPingPath($sysname)) == NET_PING_CANT_LOCATE_PING_BINARY) {
+            return PEAR::throwError(NET_PING_CANT_LOCATE_PING_BINARY_MSG, NET_PING_CANT_LOCATE_PING_BINARY);
         } else {
             return new Net_Ping($ping_path, $sysname);
         }
@@ -171,7 +171,7 @@ class Net_Ping
     function setArgs($args)
     {
         if (!is_array($args)) {
-            return PEAR::throwError(PING_INVALID_ARGUMENTS_MSG, PING_INVALID_ARGUMENTS);
+            return PEAR::throwError(NET_PING_INVALID_ARGUMENTS_MSG, NET_PING_INVALID_ARGUMENTS);
         }
 
         /* accept empty arrays, but set flag*/
@@ -202,7 +202,7 @@ class Net_Ping
         } else {
             $ping_path = exec("which ping", $output, $status);
             if (0 != $status) {
-                return PING_CANT_LOCATE_PING_BINARY;
+                return NET_PING_CANT_LOCATE_PING_BINARY;
             } else {
                 return $ping_path;
             }
@@ -296,11 +296,11 @@ class Net_Ping
         exec($cmd, $this->_result);
 
         if (!is_array($this->_result)) {
-            return PEAR::throwError(PING_FAILED_MSG, PING_FAILED);
+            return PEAR::throwError(NET_PING_FAILED_MSG, NET_PING_FAILED);
         }
 
         if (count($this->_result) == 0) {
-            return PEAR::throwError(PING_HOST_NOT_FOUND_MSG, PING_HOST_NOT_FOUND);
+            return PEAR::throwError(NET_PING_HOST_NOT_FOUND_MSG, NET_PING_HOST_NOT_FOUND);
         } else {
             return Net_Ping_Result::factory($this->_result, $this->_sysname);
         }
@@ -542,7 +542,7 @@ class Net_Ping_Result
     function factory($result, $sysname)
     {
         if (!Net_Ping_Result::_prepareParseResult($sysname)) {
-            return PEAR::throwError(PING_RESULT_UNSUPPORTED_BACKEND_MSG, PING_RESULT_UNSUPPORTED_BACKEND);
+            return PEAR::throwError(NET_PING_RESULT_UNSUPPORTED_BACKEND_MSG, NET_PING_RESULT_UNSUPPORTED_BACKEND);
         } else {
             return new Net_Ping_Result($result, $sysname);
         }
