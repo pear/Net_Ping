@@ -1,6 +1,7 @@
 <?php
+// $Id$
 error_reporting(E_ALL);
-require_once "net/Ping.php";
+require_once "Net/Ping.php";
 
 $err = false;
 
