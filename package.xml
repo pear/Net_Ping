@@ -17,11 +17,12 @@
       <name>Tomas V.V.Cox</name>
       <email>cox@idecnet.com</email>
       <role>developer</role>
+    </maintainer>
   </maintainers>
   <release>
-    <version>0.2</version>
+    <version>1.0</version>
     <date>2002-03-30</date>
-    <state>alpha</state>
+    <state>stable</state>
     <notes>
       * Added the checkHost() method
       * Added parameter to specify maximum wait time (-w)
@@ -29,9 +30,6 @@
     <filelist>
       <dir name="/" baseinstalldir="Net">
         <file role="php">Ping.php</file>
-        <dir name="tests">
-          <file role="php">01-ping.php</file>
-        </dir>
       </dir>
     </filelist>
   </release>

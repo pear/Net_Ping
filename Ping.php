@@ -34,10 +34,6 @@ define('PING_HOST_NOT_FOUND', 'unknown host');
 *   $ping->ping("yourhosthere");
 * ?>
 *
-* Warning:
-*   This code is in a _very_ early state and the
-*   api will for sure change in the future.
-*
 * @author   Martin Jansen <mj@php.net>
 * @version  $Revision$
 * @package  Net
