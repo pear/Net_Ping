@@ -1,4 +1,4 @@
-<?php
+wohawohawoha<?php
 //
 // +----------------------------------------------------------------------+
 // | PHP Version 4                                                        |
@@ -63,7 +63,7 @@ class Net_Ping
     * @var string
     * @access private
     */
-    var $ping_path = "";
+    var $_ping_path = "";
 
     /**
     * Array with the result from the ping execution
@@ -71,7 +71,7 @@ class Net_Ping
     * @var array
     * @access private
     */
-    var $result = array();
+    var $_result = array();
    
     /**
     * OS_Guess instance
@@ -79,7 +79,7 @@ class Net_Ping
     * @var object
     * @access private
     */
-    var $OS_Guess = "";
+    var $_OS_Guess = "";
     
     /**
     * OS_Guess->getSysname result
@@ -87,7 +87,7 @@ class Net_Ping
     * @var string
     * @access private
     */
-    var $sysname = "";
+    var $_sysname = "";
     
     /**
     * Ping command arguments
@@ -95,7 +95,7 @@ class Net_Ping
     * @var array
     * @access private
     */
-    var $args = array();
+    var $_args = array();
     
     /**
     * Indicates if an empty array was given to setArgs (not used yet)
@@ -103,7 +103,7 @@ class Net_Ping
     * @var boolean
     * @access private
     */
-    var $noArgs = true;
+    var $_noArgs = true;
 
     /**
     * Contains the argument->option relation
@@ -111,7 +111,7 @@ class Net_Ping
     * @var array
     * @access private
     */
-    var $argRelation = array();
+    var $_argRelation = array();
 
     
     /**
@@ -121,11 +121,11 @@ class Net_Ping
     */
     function Net_Ping()
     {
-        $this->OS_Guess = new OS_Guess;    
-        $this->sysname  = $this->OS_Guess->getSysname();
+        $this->_OS_Guess = new OS_Guess;    
+        $this->_sysname  = $this->_OS_Guess->getSysname();
         
-        $this->setPingPath();
-        $this->initArgRelation();
+        $this->_setPingPath();
+        $this->_initArgRelation();
     }
 
     /**
@@ -143,12 +143,12 @@ class Net_Ping
         
         /* accept empty arrays, but set flag*/
         if (0 == count($args)) {
-            $this->noArgs = true;
+            $this->_noArgs = true;
         } else {
-           $this->noArgs = false;
+           $this->_noArgs = false;
         }
         
-        $this->args = $args;
+        $this->_args = $args;
         
         return true;
     }
@@ -158,12 +158,12 @@ class Net_Ping
     *
     * @access private
     */
-    function setPingPath()
+    function _setPingPath()
     {
-        if ("windows" == $this->sysname) {
-            $this->ping_path = "ping";
+        if ("windows" == $this->_sysname) {
+            $this->_ping_path = "ping";
         } else {
-            $this->ping_path = exec("which ping"); /* FIXME: windows */
+            $this->_ping_path = exec("which ping"); /* FIXME: windows */
         }    
         
     }
@@ -174,7 +174,7 @@ class Net_Ping
     * @return string Argument line
     * @access private
     */
-    function createArgList()
+    function _createArgList()
     {
         $ret        = "";
         
@@ -185,13 +185,13 @@ class Net_Ping
         $quiet      = "";
         $size       = "";
         
-        foreach($this->args AS $option => $value) {
-            if(!empty($option) && NULL != $this->argRelation[$this->sysname][$option]) {
-                ${$option} = $this->argRelation[$this->sysname][$option]." ".$value." ";
+        foreach($this->_args AS $option => $value) {
+            if(!empty($option) && NULL != $this->_argRelation[$this->_sysname][$option]) {
+                ${$option} = $this->_argRelation[$this->_sysname][$option]." ".$value." ";
              }   
         }
         
-        switch($this->sysname) {
+        switch($this->_sysname) {
 
         case "freebsd":
              return $quiet.$count.$ttl.$timeout;
@@ -225,19 +225,18 @@ class Net_Ping
     function ping($host)
     {
       
-        $argList = $this->createArgList();
-        $cmd = $this->ping_path." ".$argList." ".$host;
-        exec($cmd, $result);
+        $argList = $this->_createArgList();
+        $cmd = $this->_ping_path." ".$argList." ".$host;
+        exec($cmd, $this->_result);
 
-        if (!is_array($result)) {
+        if (!is_array($this->_result)) {
             return PING_FAILED;
         }
 
-        if (count($result) == 0) {
+        if (count($this->_result) == 0) {
             return PING_HOST_NOT_FOUND;
         } else {
-            $this->result = $result;
-            return $result;
+            return $this->_result;
         }
     }
 
@@ -250,10 +249,16 @@ class Net_Ping
     * @return bool True on success or false otherwise
     *
     * @notes Output taken from ping of netkit-base-0.10-37
+    * FIXME!
     */
-    function checkHost($host, $severely = true)
+    function _checkHost($host, $severely = true)
     {
-        $res = $this->ping($host, 10, 32, true);
+        $this->setArgs(array("count" => 10,
+                             "size"  => 32,
+                             "quiet" => true
+                             )
+                       );
+        $res = $this->ping($host);
         if ($res == PING_HOST_NOT_FOUND) {
             return false;
         }
@@ -284,9 +289,9 @@ class Net_Ping
     * @return string Argument line
     * @access private
     */
-    function initArgRelation()
+    function _initArgRelation()
     {
-        $this->argRelation = array(
+        $this->_argRelation = array(
                                     "freebsd" => array (
                                                         "timeout"   => "-t",
                                                         "ttl"       => "-m",
@@ -315,7 +320,6 @@ class Net_Ping
                                                         ),
 
  /* we don't know yet what's darwin's signature 
- 
                                     "darwin" => array (
                                                         "timeout"   => "-w",
                                                         "iface"     => "-I",
