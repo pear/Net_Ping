@@ -396,7 +396,7 @@ class Net_Ping
                                                         "ttl"       => "-m",
                                                         "count"     => "-c",
                                                         "quiet"     => "-q",
-                                                        "size"      => NULL,
+                                                        "size"      => "-s",
                                                         "deadline"  => "-w"
                                                         ),
                                     "windows" => array (
