@@ -5,6 +5,8 @@
 <package version="1.0">
   <name>Net_Ping</name>
   <summary>Execute ping</summary>
+  <description>OS independet wrapper class for executing ping calls</description>
+  <license>PHP License</license>
   <maintainers>
     <maintainer>
       <user>mj</user>
@@ -26,13 +28,12 @@
     </maintainer>
   </maintainers>
   <release>
-    <version>2.0</version>
-    <date>2002-05-27</date>
+    <version>2.1</version>
+    <date>2003-02-05</date>
     <state>beta</state>
     <notes>
-      * Rewrite to handle platform differences
-      * Added the checkHost() method
-      * Added parameter to specify maximum wait time (-w)
+      * Added result object
+      * Introdiced PEAR error handling
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="Net">
@@ -40,4 +41,21 @@
       </dir>
     </filelist>
   </release>
+  <changelog>
+    <release>
+      <version>2.0</version>
+      <date>2002-05-27</date>
+      <state>beta</state>
+      <notes>
+        * Rewrite to handle platform differences
+        * Added the checkHost() method
+        * Added parameter to specify maximum wait time (-w)
+      </notes>
+      <filelist>
+        <dir name="/" baseinstalldir="Net">
+          <file role="php" name="Ping.php" />
+        </dir>
+      </filelist>
+    </release>
+  </changelog>
 </package>
