@@ -28,24 +28,42 @@
     </maintainer>
   </maintainers>
   <release>
+    <version>2.3</version>
+    <date>2003-11-12</date>
+    <state>stable</state>
+    <notes>
+      * Added AIX support
+      * Added testcases for Darwin, NetBSD, FreeBSD, HP-UX and AIX
+      * Added getMin(), getMax(), getAvg(), getStddev(), 
+              getTransmitted(), getReceived()  and getLoss() methods
+      * Fixed the parsers to return correct variable types
+    </notes>
+    <filelist>
+      <dir name="/" baseinstalldir="Net">
+        <file role="php" name="Ping.php" />
+      </dir>
+      <dir name="tests">
+        <file role="test" name="test_result_parsers.php" />
+      </dir>
+    </filelist>
+  </release>
+  <changelog>
+    <version>2.2</version>
+    <date>2003-11-10</date>
+    <state>stable</state>
+    <notes>
+      * Added darwin and hpux support
+      * Fixed minor code glitches
+      * Made code more readable
+    </notes>
+    <release>
     <version>2.1</version>
     <date>2003-02-05</date>
     <state>stable</state>
     <notes>
       * Added result object
       * Introduced PEAR error handling
-      * Rewrite to handle platform differences (2.0)
-      * Added the checkHost() method (2.0)
-      * Added parameter to specify maximum wait time (-w) (2.0)
     </notes>
-    <filelist>
-      <dir name="/" baseinstalldir="Net">
-        <file role="php" name="Ping.php" />
-      </dir>
-    </filelist>
-  </release>
-  <changelog>
-    <release>
       <version>2.0</version>
       <date>2002-05-27</date>
       <state>beta</state>
