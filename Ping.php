@@ -21,7 +21,7 @@
 // $Id$
 
 define('PING_FAILED',    'execution of ping failed');
-define('HOST_NOT_FOUND', 'unknown host');
+define('PING_HOST_NOT_FOUND', 'unknown host');
 
 /**
 * Wrapper class for ping calls
@@ -65,13 +65,14 @@ class Net_Ping
     * @param  int       $count          count of the pings
     * @param  int       $packet_size    ping packet size
     * @param  bool      $quiet          to set or not the "-q" ping param
+    * @param  int       $maxwait        seconds to wait for a response
     * @return mixed  String on error or array with the result
     * @access public
     */
-    function ping($host, $counts = 5, $packet_size = 32, $quiet = false)
+    function ping($host, $counts = 5, $packet_size = 32, $quiet = false, $maxwait = 10)
     {
         $q = $quiet ? '-q' : '';
-        $cmd = $this->ping_path." $q -c $counts -s $packet_size $host";
+        $cmd = $this->ping_path." $q -c $counts -s $packet_size -w $maxwait $host";
 
         exec($cmd, $result);
 
@@ -100,7 +101,7 @@ class Net_Ping
     function checkHost($host, $severely = true)
     {
         $res = $this->ping($host, 10, 32, true);
-        if ($res == HOST_NOT_FOUND) {
+        if ($res == PING_HOST_NOT_FOUND) {
             return false;
         }
         $line = preg_split('|\s+|', $res[3]);
