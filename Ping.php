@@ -16,7 +16,7 @@
 // | Authors: Martin Jansen <mj@php.net>                                  |
 // |          Tomas V.V.Cox <cox@idecnet.com>                             |
 // |          Jan Lehnardt  <jan@php.net>                                 |
-// |                                                                      |
+// |          Kai Schröder <k.schroeder@php.net>                          |
 // +----------------------------------------------------------------------+
 //
 // $Id$
@@ -38,8 +38,19 @@ define('PING_RESULT_UNSUPPORTED_BACKEND', 4);
 
 /**************************TODO*******************************************/
 /*
-
-*/
+ *
+ * - add Net_Ping_Result parser for:
+ *   + IRIX64
+ *   + SunOS
+ *   + AIX
+ *   + HP-UX
+ *   + Darwin
+ *   + OSF1
+ *   + BSD/OS
+ *   + OpenBSD
+ * - fix Net_Ping::checkHost()
+ * - reset result buffer
+ */
 
 /**
 * Wrapper class for ping calls
@@ -337,6 +348,24 @@ class Net_Ping
     }
 
     /**
+    * Output errors with PHP trigger_error(). You can silence the errors
+    * with prefixing a "@" sign to the function call: @Net_Ping::ping(..);
+    *
+    * @param mixed $error a PEAR error or a string with the error message
+    * @return bool false
+    * @access private
+    * @author Kai Schröder <k.schroeder@php.net>
+    */
+    function raiseError($error)
+    {
+        if (PEAR::isError($error)) {
+            $error = $error->getMessage();
+        }
+        trigger_error($error, E_USER_WARNING);
+        return false;
+    }
+
+    /**
     * Creates the argument list according to platform differences
     *
     * @return string Argument line
@@ -405,7 +434,7 @@ class Net_Ping
                                                         "ttl"       => "-i",
                                                         "count"     => "-n",
                                                         "quiet"     => NULL,
-                                                        "size"      => NULL
+                                                        "size"      => "-l"
                                                         )
 
                                );
@@ -471,7 +500,7 @@ class Net_Ping_Result
     * @var array
     * @access private
     */
-    var $_raw_data = array(); 
+    var $_raw_data = array();
 
     /**
     * The Net_Ping::_sysname
@@ -489,7 +518,7 @@ class Net_Ping_Result
     */
     var $_round_trip = array(); /* array('min' => xxx, 'avg' => yyy, 'max' => zzz) */
 
-    
+
     /**
     * Constructor for the Class
     *
@@ -512,23 +541,23 @@ class Net_Ping_Result
     */
     function factory($result, $sysname)
     {
-        if (Net_Ping_Result::_prepareParseResult($sysname)) {
+        if (!Net_Ping_Result::_prepareParseResult($sysname)) {
             return PEAR::throwError(PING_RESULT_UNSUPPORTED_BACKEND_MSG, PING_RESULT_UNSUPPORTED_BACKEND);
         } else {
             return new Net_Ping_Result($result, $sysname);
         }
     }
-    
+
     /**
     * Preparation method for _parseResult
     *
     * @access private
     * @param string $sysname OS_Guess::sysname
     * $return bool
-    */    
+    */
     function _prepareParseResult($sysname)
     {
-        return method_exists('Net_Ping_Result', '_parseResult'.$sysname);
+        return in_array('_parseresult'.$sysname, array_values(get_class_methods('Net_Ping_Result')));
     }
 
     /**
@@ -551,7 +580,7 @@ class Net_Ping_Result
     {
         $raw_data_len   = count($this->_raw_data);
         $icmp_seq_count = $raw_data_len - 4;
-        
+
         /* loop from second elment to the fifths last */
         for($idx = 1; $idx < $icmp_seq_count; $idx++)
             {
@@ -559,10 +588,10 @@ class Net_Ping_Result
                 $this->_icmp_sequence[substr($parts[4], 9, strlen($parts[4]))] = substr($parts[6], 5, strlen($parts[6]));
             }
             $this->_bytes_per_request = $parts[0];
-            $this->_bytes_total       = (int)$parts[0] * $icmp_seq_count;            
+            $this->_bytes_total       = (int)$parts[0] * $icmp_seq_count;
             $this->_target_ip         = substr($parts[3], 0, -1);
             $this->_ttl               = substr($parts[5], 4, strlen($parts[3]));
-            
+
             $stats = explode(',', $this->_raw_data[$raw_data_len - 2]);
             $transmitted = explode(' ', $stats[0]);
             $this->_transmitted = $transmitted[0];
@@ -577,9 +606,9 @@ class Net_Ping_Result
 
             $this->_round_trip['min']    = ltrim($round_trip[3]);
             $this->_round_trip['avg']    = $round_trip[4];
-            $this->_round_trip['max']    = $round_trip[5];   
-    }  
-  
+            $this->_round_trip['max']    = $round_trip[5];
+    }
+
     /**
     * Parses the output of NetBSD's ping command
     *
@@ -590,7 +619,7 @@ class Net_Ping_Result
     {
         $this->_parseResultfreebsd();
     }
-    
+
     /**
     * Parses the output of FreeBSD's ping command
     *
@@ -601,7 +630,7 @@ class Net_Ping_Result
     {
         $raw_data_len   = count($this->_raw_data);
         $icmp_seq_count = $raw_data_len - 4;
-        
+
         /* loop from second elment to the fifths last */
         for($idx = 1; $idx < $icmp_seq_count; $idx++)
             {
@@ -609,10 +638,10 @@ class Net_Ping_Result
                 $this->_icmp_sequence[substr($parts[4], 9, strlen($parts[4]))] = substr($parts[6], 5, strlen($parts[6]));
             }
             $this->_bytes_per_request = $parts[0];
-            $this->_bytes_total       = (int)$parts[0] * $icmp_seq_count;            
+            $this->_bytes_total       = (int)$parts[0] * $icmp_seq_count;
             $this->_target_ip         = substr($parts[3], 0, -1);
             $this->_ttl               = substr($parts[5], 4, strlen($parts[3]));
-            
+
             $stats = explode(',', $this->_raw_data[$raw_data_len - 2]);
             $transmitted = explode(' ', $stats[0]);
             $this->_transmitted = $transmitted[0];
@@ -633,6 +662,51 @@ class Net_Ping_Result
     }
 
     /**
+    * Parses the output of Windows' ping command
+    *
+    * @author Kai Schröder <k.schroeder@php.net>
+    * @access private
+    * @see _parseResultwindows
+    */
+    function _parseResultwindows()
+    {
+        $raw_data_len   = count($this->_raw_data);
+        $icmp_seq_count = $raw_data_len - 8;
+
+        /* loop from fourth elment to the sixths last */
+        for($idx = 1; $idx <= $icmp_seq_count; $idx++)
+        {
+            $parts = explode(' ', $this->_raw_data[$idx + 2]);
+            $this->_icmp_sequence[$idx - 1] = (int)substr(end(split('=', $parts[4])), 0, -2);
+
+            $ttl = (int)substr($parts[5], 4, strlen($parts[3]));
+            if ($ttl > 0 && $this->_ttl == 0) {
+                $this->_ttl = $ttl;
+            }
+        }
+
+        $parts = explode(' ', $this->_raw_data[1]);
+        $this->_bytes_per_request = (int)$parts[4];
+        $this->_bytes_total       = $this->_bytes_per_request * $icmp_seq_count;
+        $this->_target_ip         = substr(trim($parts[2]), 1, -1);
+
+        $stats = explode(',', $this->_raw_data[$raw_data_len - 3]);
+        $transmitted = explode('=', $stats[0]);
+        $this->_transmitted = (int)$transmitted[1];
+
+        $received = explode('=', $stats[1]);
+        $this->_received = (int)$received[1];
+
+        $loss = explode('=', $stats[2]);
+        $this->_loss = (int)$loss[1];
+
+        $round_trip = explode(',', str_replace('=', ',', $this->_raw_data[$raw_data_len - 1]));
+        $this->_round_trip['min'] = (int)substr(trim($round_trip[1]), 0, -2);
+        $this->_round_trip['avg'] = (int)substr(trim($round_trip[3]), 0, -2);
+        $this->_round_trip['max'] = (int)substr(trim($round_trip[5]), 0, -2);
+    }
+
+    /**
     * Returns a Ping_Result property
     *
     * @param string $name property name
@@ -643,54 +717,54 @@ class Net_Ping_Result
     {
         return isset($this->$name)?$this->$name:'';
     }
- 
+
     /**
     * Accessor for $this->_target_ip;
     *
     * @return string IP address
     * @access public
     * @see Ping_Result::_target_ip
-    */   
+    */
     function getTargetIp()
     {
-    	return $this->_target_ip;	
+    	return $this->_target_ip;
     }
- 
+
     /**
-    * Accessor for $this->_icmp_sequence;	
+    * Accessor for $this->_icmp_sequence;
     *
     * @return array ICMP sequence
     * @access private
     * @see Ping_Result::_icmp_sequence
-    */   
+    */
     function getICMPSequence()
     {
-    	return $this->_icmp_sequence;	
-    } 
- 
+    	return $this->_icmp_sequence;
+    }
+
     /**
     * Accessor for $this->_bytes_per_request;
     *
     * @return int bytes per request
     * @access private
     * @see Ping_Result::_bytes_per_request
-    */   
+    */
     function getBytesPerRequest()
     {
-    	return $this->_bytes_per_request;	
-    } 
- 
+    	return $this->_bytes_per_request;
+    }
+
     /**
     * Accessor for $this->_bytes_total;
     *
     * @return int total bytes
     * @access private
     * @see Ping_Result::_bytes_total
-    */   
+    */
     function getBytesTotal()
     {
     	return $this->_bytes_total;
-    } 
+    }
 
     /**
     * Accessor for $this->_ttl;
@@ -701,44 +775,44 @@ class Net_Ping_Result
     */
     function getTTL()
     {
-    	return $this->_ttl;	
-    } 
- 
+    	return $this->_ttl;
+    }
+
     /**
     * Accessor for $this->_raw_data;
     *
     * @return array raw data
     * @access private
     * @see Ping_Result::_raw_data
-    */   
+    */
     function getRawData()
     {
-    	return $this->_raw_data;	
-    } 
- 
+    	return $this->_raw_data;
+    }
+
     /**
-    * Accessor for $this->_sysname;	
+    * Accessor for $this->_sysname;
     *
     * @return string OS_Guess::sysname
     * @access private
     * @see Ping_Result::_sysname
-    */   
+    */
     function getSystemName()
     {
-    	return $this->_sysname;	
-    } 
- 
+    	return $this->_sysname;
+    }
+
     /**
     * Accessor for $this->_round_trip;
     *
     * @return array statistical information
     * @access private
     * @see Ping_Result::_round_trip
-    */   
+    */
     function getRoundTrip()
     {
-    	return $this->_round_trip;	
-    } 
+    	return $this->_round_trip;
+    }
 
 }
 ?>
