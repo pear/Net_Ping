@@ -29,7 +29,7 @@
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="Net">
-        <file role="php">Ping.php</file>
+        <file role="php" name="Ping.php" />
       </dir>
     </filelist>
   </release>
