@@ -606,13 +606,14 @@ class Net_Ping_Result
 
             /* if mdev field exists, shift input one unit left */
             if (strpos($this->_raw_data[$raw_data_len - 1], 'mdev')) {
+		/* do not forget the rtt field */
+                $this->_round_trip['min']    = ltrim($round_trip[5]);
+                $this->_round_trip['avg']    = $round_trip[6];
+                $this->_round_trip['max']    = $round_trip[7];
+            } else {
                 $this->_round_trip['min']    = ltrim($round_trip[4]);
                 $this->_round_trip['avg']    = $round_trip[5];
                 $this->_round_trip['max']    = $round_trip[6];
-            } else {
-                $this->_round_trip['min']    = ltrim($round_trip[3]);
-                $this->_round_trip['avg']    = $round_trip[4];
-                $this->_round_trip['max']    = $round_trip[5];
             }
     }
 
