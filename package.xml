@@ -48,30 +48,38 @@
     </filelist>
   </release>
   <changelog>
-    <version>2.2</version>
-    <date>2003-11-10</date>
-    <state>stable</state>
-    <notes>
-      * Added darwin and hpux support
-      * Fixed minor code glitches
-      * Made code more readable
-    </notes>
+
     <release>
-    <version>2.1</version>
-    <date>2003-02-05</date>
-    <state>stable</state>
-    <notes>
-      * Added result object
-      * Introduced PEAR error handling
-    </notes>
-      <version>2.0</version>
-      <date>2002-05-27</date>
-      <state>beta</state>
+      <version>2.2</version>
+      <date>2003-11-10</date>
+      <state>stable</state>
       <notes>
-        * Rewrite to handle platform differences
-        * Added the checkHost() method
-        * Added parameter to specify maximum wait time (-w)
+	* Added darwin and hpux support
+	* Fixed minor code glitches
+	* Made code more readable
       </notes>
     </release>
+ 
+    <release>
+      <version>2.1</version>
+      <date>2003-02-05</date>
+      <state>stable</state>
+      <notes>
+        * Added result object
+        * Introduced PEAR error handling
+      </notes>
+    </release>
+
+    <release>
+       <version>2.0</version>
+       <date>2002-05-27</date>
+       <state>beta</state>
+       <notes>
+         * Rewrite to handle platform differences
+         * Added the checkHost() method
+         * Added parameter to specify maximum wait time (-w)
+       </notes>
+    </release>
+
   </changelog>
 </package>
