@@ -30,10 +30,13 @@
   <release>
     <version>2.1</version>
     <date>2003-02-05</date>
-    <state>beta</state>
+    <state>stable</state>
     <notes>
       * Added result object
       * Introdiced PEAR error handling
+      * Rewrite to handle platform differences (2.0)
+      * Added the checkHost() method (2.0)
+      * Added parameter to specify maximum wait time (-w) (2.0)
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="Net">
@@ -51,11 +54,6 @@
         * Added the checkHost() method
         * Added parameter to specify maximum wait time (-w)
       </notes>
-      <filelist>
-        <dir name="/" baseinstalldir="Net">
-          <file role="php" name="Ping.php" />
-        </dir>
-      </filelist>
     </release>
   </changelog>
 </package>
