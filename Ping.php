@@ -696,61 +696,26 @@ class Net_Ping_Result
     */   
     function _parseResulthpux()
     {
+        $parts          = array();
         $raw_data_len   = count($this->_raw_data);
         $icmp_seq_count = $raw_data_len - 5;
+
         /* loop from second elment to the fifths last */
         for($idx = 1; $idx <= $icmp_seq_count; $idx++) {
             $parts = explode(' ', $this->_raw_data[$idx]);
             $this->_icmp_sequence[(int)substr($parts[4], 9, strlen($parts[4]))] = (int)substr($parts[5], 5, strlen($parts[5]));
         }
-        $this->_bytes_per_request = $parts[0];
-        $this->_bytes_total       = (int)$parts[0] * $icmp_seq_count;
-        $this->_target_ip         = substr($parts[3], 0, -1);
+        $this->_bytes_per_request = (int)$parts[0];
+        $this->_bytes_total       = (int)($parts[0] * $icmp_seq_count);
+        $this->_target_ip         = NULL; /* no target ip */
         $this->_ttl               = NULL; /* no ttl */
 
         $stats = explode(',', $this->_raw_data[$raw_data_len - 2]);
         $transmitted = explode(' ', $stats[0]);
-        $this->_transmitted = $transmitted[0];
+        $this->_transmitted = (int)$transmitted[0];
 
         $received = explode(' ', $stats[1]);
-        $this->_received = $received[1];
-
-        $loss = explode(' ', $stats[2]);
-        $this->_loss = (int)$loss[1];
-
-        $round_trip = explode('/', str_replace('=', '/',$this->_raw_data[$raw_data_len - 1]));
-
-        $this->_round_trip['min']    = ltrim($round_trip[3]);
-        $this->_round_trip['avg']    = $round_trip[4];
-        $this->_round_trip['max']    = $round_trip[5];
-        $this->_round_trip['stddev'] = $round_trip[6];
-    } /* function _parseResulthpux() */
-
-    /**
-    * Parses the output of AIX' ping command
-    *
-    * @access private
-    */   
-    function _parseResultaix()
-    {
-        $raw_data_len   = count($this->_raw_data);
-        $icmp_seq_count = $raw_data_len - 5;
-        /* loop from second elment to the fifths last */
-        for($idx = 1; $idx <= $icmp_seq_count; $idx++) {
-            $parts = explode(' ', $this->_raw_data[$idx]);
-            $this->_icmp_sequence[(int)substr($parts[4], 9, strlen($parts[4]))] = (int)substr($parts[6], 5, strlen($parts[6]));
-        }
-        $this->_bytes_per_request = $parts[0];
-        $this->_bytes_total       = (int)$parts[0] * $icmp_seq_count;
-        $this->_target_ip         = substr($parts[3], 0, -1);
-        $this->_ttl               = substr($parts[5], 4, strlen($parts[3]));
-
-        $stats = explode(',', $this->_raw_data[$raw_data_len - 2]);
-        $transmitted = explode(' ', $stats[0]);
-        $this->_transmitted = $transmitted[0];
-
-        $received = explode(' ', $stats[1]);
-        $this->_received = $received[1];
+        $this->_received = (int)$received[1];
 
         $loss = explode(' ', $stats[2]);
         $this->_loss = (int)$loss[1];
@@ -760,7 +725,46 @@ class Net_Ping_Result
         $this->_round_trip['min']    = (int)ltrim($round_trip[3]);
         $this->_round_trip['avg']    = (int)$round_trip[4];
         $this->_round_trip['max']    = (int)$round_trip[5];
-        $this->_round_trip['stddev'] = $round_trip[6];
+        $this->_round_trip['stddev'] = NULL; /* no stddev */
+    } /* function _parseResulthpux() */
+
+    /**
+    * Parses the output of AIX' ping command
+    *
+    * @access private
+    */   
+    function _parseResultaix()
+    {
+        $parts          = array();
+        $raw_data_len   = count($this->_raw_data);
+        $icmp_seq_count = $raw_data_len - 5;
+
+        /* loop from second elment to the fifths last */
+        for($idx = 1; $idx <= $icmp_seq_count; $idx++) {
+            $parts = explode(' ', $this->_raw_data[$idx]);
+            $this->_icmp_sequence[(int)substr($parts[4], 9, strlen($parts[4]))] = (int)substr($parts[6], 5, strlen($parts[6]));
+        }
+        $this->_bytes_per_request = (int)$parts[0];
+        $this->_bytes_total       = (int)($parts[0] * $icmp_seq_count);
+        $this->_target_ip         = substr($parts[3], 0, -1);
+        $this->_ttl               = (int)substr($parts[5], 4, strlen($parts[3]));
+
+        $stats = explode(',', $this->_raw_data[$raw_data_len - 2]);
+        $transmitted = explode(' ', $stats[0]);
+        $this->_transmitted = (int)$transmitted[0];
+
+        $received = explode(' ', $stats[1]);
+        $this->_received = (int)$received[1];
+
+        $loss = explode(' ', $stats[2]);
+        $this->_loss = (int)$loss[1];
+
+        $round_trip = explode('/', str_replace('=', '/',$this->_raw_data[$raw_data_len - 1]));
+
+        $this->_round_trip['min']    = (int)ltrim($round_trip[3]);
+        $this->_round_trip['avg']    = (int)$round_trip[4];
+        $this->_round_trip['max']    = (int)$round_trip[5];
+        $this->_round_trip['stddev'] = NULL; /* no stddev */
     } /* function _parseResultaix() */
 
     /**
@@ -953,6 +957,64 @@ class Net_Ping_Result
     {
     	return $this->_round_trip;
     } /* function getRoundTrip() */
+
+    /**
+    * Accessor for $this->_round_trip['min'];
+    *
+    * @return array statistical information
+    * @access private
+    * @see Ping_Result::_round_trip
+    */
+    function getMin()
+    {
+    	return $this->_round_trip['min'];
+    } /* function getMin() */
+
+    /**
+    * Accessor for $this->_round_trip['max'];
+    *
+    * @return array statistical information
+    * @access private
+    * @see Ping_Result::_round_trip
+    */
+    function getMax()
+    {
+    	return $this->_round_trip['max'];
+    } /* function getMax() */
+
+    /**
+    * Accessor for $this->_round_tripp['avg'];
+    *
+    * @return array statistical information
+    * @access private
+    * @see Ping_Result::_round_trip
+    */
+    function getAvg()
+    {
+    	return $this->_round_trip['avg'];
+    } /* function getAvg() */
+
+    /**
+    * Accessor for $this->_transmitted;
+    *
+    * @return array statistical information
+    * @access private
+    */
+    function getTransmitted()
+    {
+    	return $this->_transmitted;
+    } /* function getTransmitted() */
+
+    /**
+    * Accessor for $this->_received;
+    *
+    * @return array statistical information
+    * @access private
+    */
+    function getReceived()
+    {
+    	return $this->_received;
+    } /* function getReceived() */
 
 } /* class Net_Ping_Result */
 ?>
