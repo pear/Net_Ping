@@ -58,7 +58,7 @@ define('NET_PING_RESULT_UNSUPPORTED_BACKEND', 4);
 * Usage:
 *
 * <?php
-*   require_once "Net_Ping/Ping.php";
+*   require_once "Net/Ping.php";
 *   $ping = Net_Ping::factory();
 *   if(PEAR::isError($ping)) {
 *     echo $ping->getMessage();
@@ -256,7 +256,10 @@ class Net_Ping
              $retval[0] = $quiet.$count.$ttl.$timeout;
              $retval[1] = "";
              break;
-
+		case "darwin":
+			 $retval[0] = $count.$timeout.$size;
+			 $retval[1] = "";
+			 break;
         case "netbsd":
              $retval[0] = $quiet.$count.$iface.$size.$ttl.$timeout;
              $retval[1] = "";
@@ -290,10 +293,9 @@ class Net_Ping
     */
     function ping($host)
     {
-
         $argList = $this->_createArgList();
         $cmd = $this->_ping_path." ".$argList[0]." ".$host." ".$argList[1];
-        exec($cmd, $this->_result);
+		exec($cmd, $this->_result);
 
         if (!is_array($this->_result)) {
             return PEAR::throwError(NET_PING_FAILED_MSG, NET_PING_FAILED);
@@ -305,7 +307,6 @@ class Net_Ping
             return Net_Ping_Result::factory($this->_result, $this->_sysname);
         }
     }
-
     /**
     * Check if a host is up by pinging it
     *
@@ -317,6 +318,8 @@ class Net_Ping
     */
     function checkHost($host, $severely = true)
     {
+    	$matches = array();
+    	
         $this->setArgs(array("count" => 10,
                              "size"  => 32,
                              "quiet" => null,
@@ -327,9 +330,8 @@ class Net_Ping
         if (PEAR::isError($res)) {
             return false;
         }
-        if (!preg_match_all('|\d+|', $res[3], $m) || count($m[0]) < 3) {
+        if (!preg_match_all('|\d+|', $res[3], $matches) || count($matches[0]) < 3) {
             ob_start();
-            var_dump($line);
             $rep = ob_get_contents();
             ob_end_clean();
             trigger_error("Output format seems not to be supported, please report ".
@@ -337,11 +339,11 @@ class Net_Ping
                           "version of ping:\n $rep");
             return false;
         }
-        if ($m[0][1] == 0) {
+        if ($matches[0][1] == 0) {
             return false;
         }
         // [0] => transmitted, [1] => received
-        if ($m[0][0] != $m[0][1] && $severely) {
+        if ($matches[0][0] != $matches[0][1] && $severely) {
             return false;
         }
         return true;
@@ -382,7 +384,8 @@ class Net_Ping
                                                         "size"      => " ",
                                                         "iface"     => "-i"
                                                         ),
-                                    "freebsd" => array (
+                                    
+                                   "freebsd" => array (
                                                         "timeout"   => "-t",
                                                         "ttl"       => "-m",
                                                         "count"     => "-c",
@@ -409,16 +412,14 @@ class Net_Ping
                                                         "size"      => "-s"
                                                         ),
 
- /* we don't know yet what's darwin's signature
                                     "darwin" => array (
-                                                        "timeout"   => "-w",
-                                                        "iface"     => "-I",
-                                                        "ttl"       => "-t",
+                                                        "timeout"   => "-t",
+                                                        "iface"     => NULL,
+                                                        "ttl"       => NULL,
                                                         "count"     => "-c",
                                                         "quiet"     => "-q",
                                                         "size"      => NULL
                                                         ),
-*/
                                     "linux" => array (
                                                         "timeout"   => "-t",
                                                         "iface"     => NULL,
@@ -548,18 +549,17 @@ class Net_Ping_Result
         }
     }
 
-    /**
-    * Preparation method for _parseResult
-    *
-    * @access private
-    * @param string $sysname OS_Guess::sysname
-    * $return bool
-    */
-    function _prepareParseResult($sysname)
-    {
-        return in_array('_parseresult'.$sysname, array_values(get_class_methods('Net_Ping_Result')));
-    }
-
+	/**
+	* Preparation method for _parseResult
+	*
+	* @access private
+	* @param string $sysname OS_Guess::sysname
+	* $return bool
+	*/
+	function _prepareParseResult($sysname)
+	{
+		return in_array('_parseresult'.$sysname, array_values(get_class_methods('Net_Ping_Result')));
+	}
     /**
     * Delegates the parsing routine according to $this->_sysname
     *
@@ -627,12 +627,51 @@ class Net_Ping_Result
     {
         $this->_parseResultfreebsd();
     }
+  
+    /**
+    * Parses the output of Darwin's ping command
+    *
+    * @access private
+    */
+    function _parseResultdarwin()
+    {
+        $raw_data_len   = count($this->_raw_data);
+        $icmp_seq_count = $raw_data_len - 4;
 
+        /* loop from second elment to the fifths last */
+        for($idx = 1; $idx < $icmp_seq_count; $idx++)
+            {
+                $parts = explode(' ', $this->_raw_data[$idx]);
+                $this->_icmp_sequence[substr($parts[4], 9, strlen($parts[4]))] = substr($parts[6], 5, strlen($parts[6]));
+            }
+            $this->_bytes_per_request = $parts[0];
+            $this->_bytes_total       = (int)$parts[0] * $icmp_seq_count;
+            $this->_target_ip         = substr($parts[3], 0, -1);
+            $this->_ttl               = substr($parts[5], 4, strlen($parts[3]));
+
+            $stats = explode(',', $this->_raw_data[$raw_data_len - 2]);
+            $transmitted = explode(' ', $stats[0]);
+            $this->_transmitted = $transmitted[0];
+
+            $received = explode(' ', $stats[1]);
+            $this->_received = $received[1];
+
+            $loss = explode(' ', $stats[2]);
+            $this->_loss = (int)$loss[1];
+
+            $round_trip = explode('/', str_replace('=', '/', substr($this->_raw_data[$raw_data_len - 1], 0, -3)));
+
+            $this->_round_trip['min']    = ltrim($round_trip[3]);
+            $this->_round_trip['avg']    = $round_trip[4];
+            $this->_round_trip['max']    = $round_trip[5];
+            $this->_round_trip['stddev'] = $round_trip[6];
+
+    }
+    
     /**
     * Parses the output of FreeBSD's ping command
     *
     * @access private
-    * @see _parseResultfreebsd
     */
     function _parseResultfreebsd()
     {
@@ -674,7 +713,6 @@ class Net_Ping_Result
     *
     * @author Kai Schröder <k.schroeder@php.net>
     * @access private
-    * @see _parseResultwindows
     */
     function _parseResultwindows()
     {
@@ -693,6 +731,7 @@ class Net_Ping_Result
             }
         }
 
+       
         $parts = explode(' ', $this->_raw_data[1]);
         $this->_bytes_per_request = (int)$parts[4];
         $this->_bytes_total       = $this->_bytes_per_request * $icmp_seq_count;
