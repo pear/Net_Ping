@@ -112,7 +112,7 @@ class Net_Ping
     var $_args = array();
 
     /**
-    * Indicates if an empty array was given to setArgs (not used yet)
+    * Indicates if an empty array was given to setArgs
     *
     * @var boolean
     * @access private
@@ -339,6 +339,11 @@ class Net_Ping
     */
     function ping($host)
     {
+        
+        if($this->_noArgs) {
+            $this->setArgs(array('count' => 3));
+        }
+
         $argList = $this->_createArgList();
         $cmd = $this->_ping_path." ".$argList['pre']." ".$host." ".$argList['post'];
         exec($cmd, $this->_result);
