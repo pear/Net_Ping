@@ -18,12 +18,19 @@
       <email>cox@idecnet.com</email>
       <role>developer</role>
     </maintainer>
+    <maintainer>
+      <user>jan</user>
+      <name>Jan Lehnardt</name>
+      <email>jan@php.net</email>
+      <role>lead</role>
+    </maintainer>
   </maintainers>
   <release>
-    <version>1.0</version>
-    <date>2002-03-30</date>
-    <state>stable</state>
+    <version>2.0</version>
+    <date>2002-05-27</date>
+    <state>beta</state>
     <notes>
+      * Rewrite to handle platform differences
       * Added the checkHost() method
       * Added parameter to specify maximum wait time (-w)
     </notes>

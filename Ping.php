@@ -15,13 +15,23 @@
 // +----------------------------------------------------------------------+
 // | Authors: Martin Jansen <mj@php.net>                                  |
 // |          Tomas V.V.Cox <cox@idecnet.com>                             |
+// /          Jan Lehnardt  <jan@php.net>                                 /
 // |                                                                      |
 // +----------------------------------------------------------------------+
 //
 // $Id$
 
+require_once "PEAR.php";
+require_once "OS/Guess.php";
+
 define('PING_FAILED', 'execution of ping failed');
 define('PING_HOST_NOT_FOUND', 'unknown host');
+define('PING_INVALID_ARGUMENTS', 'invalid argument array');
+
+/**************************TODO*******************************************/
+/*
+return an object with ping results, make raw, ping data optional
+*/
 
 /**
 * Wrapper class for ping calls
@@ -31,7 +41,12 @@ define('PING_HOST_NOT_FOUND', 'unknown host');
 * <?php
 *   require_once "Net_Ping/Ping.php";
 *   $ping = new Net_Ping;
-*   $ping->ping("yourhosthere");
+    $ping->setArgs(array("count" => 5),
+                         "size"  => 32),
+                         "ttl"   => 512)
+                         )
+                   );      
+*   var_dump($ping->ping("example.com"));
 * ?>
 *
 * @author   Martin Jansen <mj@php.net>
@@ -44,45 +59,174 @@ class Net_Ping
 
     /**
     * Location where the ping program is stored
+    *
     * @var string
+    * @access private
     */
-    var $ping_path = "ping";
+    var $ping_path = "";
 
     /**
     * Array with the result from the ping execution
+    *
     * @var array
+    * @access private
     */
     var $result = array();
+   
+    /**
+    * OS_Guess instance
+    *
+    * @var object
+    * @access private
+    */
+    var $OS_Guess = "";
+    
+    /**
+    * OS_Guess->getSysname result
+    *
+    * @var string
+    * @access private
+    */
+    var $sysname = "";
+    
+    /**
+    * Ping command arguments
+    *
+    * @var array
+    * @access private
+    */
+    var $args = array();
+    
+    /**
+    * Indicates if an empty array was given to setArgs (not used yet)
+    *
+    * @var boolean
+    * @access private
+    */
+    var $noArgs = true;
 
+    /**
+    * Contains the argument->option relation
+    * 
+    * @var array
+    * @access private
+    */
+    var $argRelation = array();
+
+    
+    /**
+    * Constructor for the Class
+    *
+    * @access private
+    */
+    function Net_Ping()
+    {
+        $this->OS_Guess = new OS_Guess;    
+        $this->sysname  = $this->OS_Guess->getSysname();
+        
+        $this->setPingPath();
+        $this->initArgRelation();
+    }
+
+    /**
+    * Set the arguments array
+    *
+    * @param array $args Hash with options
+    * @return mixed true or PEAR_error
+    * @access public
+    */
+    function setArgs($args)
+    {
+        if (!is_array($args)) {
+            return PEAR::raiseError(PING_INVALID_ARGUMENTS);
+        }
+        
+        /* accept empty arrays, but set flag*/
+        if (0 == count($args)) {
+            $this->noArgs = true;
+        } else {
+           $this->noArgs = false;
+        }
+        
+        $this->args = $args;
+        
+        return true;
+    }
+    
+    /**
+    * Sets the system's path to the ping binary
+    *
+    * @access private
+    */
+    function setPingPath()
+    {
+        if ("windows" == $this->sysname) {
+            $this->ping_path = "ping";
+        } else {
+            $this->ping_path = exec("which ping"); /* FIXME: windows */
+        }    
+        
+    }
+    
+    /**
+    * Creates the argument list according to platform differences
+    *
+    * @return string Argument line
+    * @access private
+    */
+    function createArgList()
+    {
+        $ret        = "";
+        
+        $timeout    = "";
+        $iface      = "";
+        $ttl        = "";
+        $count      = "";
+        $quiet      = "";
+        $size       = "";
+        
+        foreach($this->args AS $option => $value) {
+            if(!empty($option) && NULL != $this->argRelation[$this->sysname][$option]) {
+                ${$option} = $this->argRelation[$this->sysname][$option]." ".$value." ";
+             }   
+        }
+        
+        switch($this->sysname) {
+
+        case "freebsd":
+             return $quiet.$count.$ttl.$timeout;
+             break;
+
+        case "netbsd":
+             return $quiet.$count.$iface.$size.$ttl.$timeout;
+             break;
+             
+        case "linux":
+             return $quiet.$count.$ttl.$size.$timeout;
+             break;
+        
+        case "windows":
+             return $count.$ttl.$timeout;
+             break;     
+             
+        default:
+             return "";
+             break;
+        }
+    }
+  
     /**
     * Execute ping
     *
-    * @param  string    $host           hostname
-    * @param  int       $count          count of the pings
-    * @param  int       $packet_size    ping packet size
-    * @param  bool      $quiet          to set or not the "-q" ping param
-    * @param  int       $maxwait        seconds to wait for a response
+    * @param  string    $host   hostname
     * @return mixed  String on error or array with the result
     * @access public
     */
-    function ping($host, $counts = 5, $packet_size = 32, $quiet = false, $maxwait = 10)
+    function ping($host)
     {
-        $q = $quiet ? '-q' : '';
-        switch(exec("uname")) {
-        
-        case "FreeBSD":
-            $cmd = $this->ping_path." $q -c $counts -t $maxwait $host";
-            break;
-        
-        case "HP-UX":
-            $cmd = $this->ping_path." $host $packet_size $counts";
-            break;
-            
-        default:
-            $cmd = $this->ping_path." $q -c $counts -s $packet_size -w $maxwait $host";
-            break;
-        }    
-
+      
+        $argList = $this->createArgList();
+        $cmd = $this->ping_path." ".$argList." ".$host;
         exec($cmd, $result);
 
         if (!is_array($result)) {
@@ -132,6 +276,75 @@ class Net_Ping
             }
         }
         return true;
+    }
+
+    /**
+    * Creates the argument list according to platform differences
+    *
+    * @return string Argument line
+    * @access private
+    */
+    function initArgRelation()
+    {
+        $this->argRelation = array(
+                                    "freebsd" => array (
+                                                        "timeout"   => "-t",
+                                                        "ttl"       => "-m",
+                                                        "count"     => "-c",
+                                                        "quiet"     => "-q",
+                                                        "size"      => NULL,
+                                                        "iface"     => NULL
+                                                        ),
+
+                                    "netbsd" => array (
+                                                        "timeout"   => "-w",
+                                                        "iface"     => "-I",
+                                                        "ttl"       => "-T",
+                                                        "count"     => "-c",
+                                                        "quiet"     => "-q",
+                                                        "size"      => "-s"
+                                                        ),
+
+                                    "openbsd" => array (
+                                                        "timeout"   => "-w",
+                                                        "iface"     => "-I",
+                                                        "ttl"       => "-t",
+                                                        "count"     => "-c",
+                                                        "quiet"     => "-q",
+                                                        "size"      => "-s"
+                                                        ),
+
+ /* we don't konw yet whats darwin's signature 
+ 
+                                    "darwin" => array (
+                                                        "timeout"   => "-w",
+                                                        "iface"     => "-I",
+                                                        "ttl"       => "-t",
+                                                        "count"     => "-c",
+                                                        "quiet"     => "-q",
+                                                        "size"      => NULL
+                                                        ),
+*/
+                                    "linux" => array (
+                                                        "timeout"   => "-t",
+                                                        "iface"     => NULL,
+                                                        "ttl"       => "-m",
+                                                        "count"     => "-c",
+                                                        "quiet"     => "-q",
+                                                        "size"      => NULL
+                                                        ),
+                                    "windows" => array (
+                                                        "timeout"   => "-w",
+                                                        "iface"     => NULL,
+                                                        "ttl"       => "-i",
+                                                        "count"     => "-n",
+                                                        "quiet"     => NULL,
+                                                        "size"      => NULL
+                                                        )
+
+                               );                     
+
+                                                   
     }
 }
 ?>
