@@ -20,7 +20,7 @@
 //
 // $Id$
 
-define('PING_FAILED',    'execution of ping failed');
+define('PING_FAILED', 'execution of ping failed');
 define('PING_HOST_NOT_FOUND', 'unknown host');
 
 /**
