@@ -24,11 +24,11 @@
 require_once "PEAR.php";
 require_once "OS/Guess.php";
 
-define('NET_PING_FAILED_MSG', 'execution of ping failed');
-define('NET_PING_HOST_NOT_FOUND_MSG', 'unknown host');
-define('NET_PING_INVALID_ARGUMENTS_MSG', 'invalid argument array');
-define('NET_PING_CANT_LOCATE_PING_BINARY_MSG', 'unable to locate the ping binary');
-define('NET_PING_RESULT_UNSUPPORTED_BACKEND_MSG', 'Backend not Supported');
+define('NET_PING_FAILED_MSG',                     'execution of ping failed'        );
+define('NET_PING_HOST_NOT_FOUND_MSG',             'unknown host'                    );
+define('NET_PING_INVALID_ARGUMENTS_MSG',          'invalid argument array'          );
+define('NET_PING_CANT_LOCATE_PING_BINARY_MSG',    'unable to locate the ping binary');
+define('NET_PING_RESULT_UNSUPPORTED_BACKEND_MSG', 'Backend not Supported'           );
 
 define('NET_PING_FAILED',                     0);
 define('NET_PING_HOST_NOT_FOUND',             1);
@@ -146,9 +146,9 @@ class Net_Ping
     */
     function factory()
     {
-        $OS_Guess  = new OS_Guess;
-        $sysname   = $OS_Guess->getSysname();
         $ping_path = '';
+
+        $sysname = Net_Ping::_setSystemName();
 
         if (($ping_path = Net_Ping::_setPingPath($sysname)) == NET_PING_CANT_LOCATE_PING_BINARY) {
             return PEAR::throwError(NET_PING_CANT_LOCATE_PING_BINARY_MSG, NET_PING_CANT_LOCATE_PING_BINARY);
@@ -156,6 +156,27 @@ class Net_Ping
             return new Net_Ping($ping_path, $sysname);
         }
     } /* function factory() */
+
+    /** 
+     * Resolve the system name
+     *
+     * @access private
+     */
+    function _setSystemName()
+    {
+        $OS_Guess  = new OS_Guess;
+        $sysname   = $OS_Guess->getSysname();
+
+        /* Nasty hack for Debian, as it uses a custom ping version */
+        if ('linux' == $sysname) {
+            if (file_exists('/etc/debian_version')) {
+                $sysname = 'debian';
+            }
+        }
+
+        return $sysname;
+        
+    } /* function _setSystemName */
 
     /**
     * Set the arguments array
@@ -170,17 +191,28 @@ class Net_Ping
             return PEAR::throwError(NET_PING_INVALID_ARGUMENTS_MSG, NET_PING_INVALID_ARGUMENTS);
         }
 
-        /* accept empty arrays, but set flag*/
-        if (0 == count($args)) {
-            $this->_noArgs = true;
-        } else {
-           $this->_noArgs = false;
-        }
+        $this->_setNoArgs($args);
 
         $this->_args = $args;
 
         return true;
     } /* function setArgs() */
+
+    /**
+    * Set the noArgs flag
+    *
+    * @param array $args Hash with options
+    * @return void
+    * @access private
+    */
+    function _setNoArgs($args)
+    {
+        if (0 == count($args)) {
+            $this->_noArgs = true;
+        } else {
+            $this->_noArgs = false;
+        }
+    } /* function _setNoArgs() */
 
     /**
     * Sets the system's path to the ping binary
@@ -225,7 +257,7 @@ class Net_Ping
         $deadline   = "";
 
         foreach($this->_args AS $option => $value) {
-            if(!empty($option) && NULL != $this->_argRelation[$this->_sysname][$option]) {
+            if(!empty($option) && isset($this->_argRelation[$this->_sysname][$option]) && NULL != $this->_argRelation[$this->_sysname][$option]) {
                 ${$option} = $this->_argRelation[$this->_sysname][$option]." ".$value." ";
              }
         }
@@ -267,6 +299,14 @@ class Net_Ping
              $retval['post'] = "";
              break;
 
+        case "debian":
+             $retval['pre'] = $quiet.$count.$ttl.$size.$timeout;
+             $retval['post'] = "";
+
+             /* undo nasty debian hack*/
+             $this->_sysname = 'linux';
+             break;
+
         case "windows":
              $retval['pre'] = $count.$ttl.$timeout;
              $retval['post'] = "";
@@ -287,7 +327,6 @@ class Net_Ping
              $retval['post'] = "";
              break;
         }
-
         return($retval);
     }  /* function _createArgList() */
 
@@ -438,6 +477,15 @@ class Net_Ping
                                               "deadline"  => "-w"
                                               );
 
+        $this->_argRelation["debian"] = array (
+                                              "timeout"   => "-t",
+                                              "iface"     => NULL,
+                                              "ttl"       => "-m",
+                                              "count"     => "-c",
+                                              "quiet"     => "-q",
+                                              "size"      => "-s",
+                                              );
+
         $this->_argRelation["windows"] = array (
                                                 "timeout"   => "-w",
                                                 "iface"     => NULL,
@@ -580,7 +628,9 @@ class Net_Ping_Result
 	*/
 	function _prepareParseResult($sysname)
 	{
-		return in_array('_parseresult'.$sysname, array_values(get_class_methods('Net_Ping_Result')));
+        $parse_methods = array_values(get_class_methods('Net_Ping_Result'));
+
+		return in_array('_parseresult'.$sysname, $parse_methods);
 	} /* function _prepareParseResult() */
 
     /**
