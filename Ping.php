@@ -604,9 +604,16 @@ class Net_Ping_Result
 
             $round_trip = explode('/', str_replace('=', '/', substr($this->_raw_data[$raw_data_len - 1], 0, -3)));
 
-            $this->_round_trip['min']    = ltrim($round_trip[3]);
-            $this->_round_trip['avg']    = $round_trip[4];
-            $this->_round_trip['max']    = $round_trip[5];
+            /* if mdev field exists, shift input one unit left */
+            if (strpos($this->_raw_data[$raw_data_len - 1], 'mdev')) {
+                $this->_round_trip['min']    = ltrim($round_trip[4]);
+                $this->_round_trip['avg']    = $round_trip[5];
+                $this->_round_trip['max']    = $round_trip[6];
+            } else {
+                $this->_round_trip['min']    = ltrim($round_trip[3]);
+                $this->_round_trip['avg']    = $round_trip[4];
+                $this->_round_trip['max']    = $round_trip[5];
+            }
     }
 
     /**
