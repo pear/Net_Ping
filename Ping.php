@@ -585,7 +585,7 @@ class Net_Ping_Result
         for($idx = 1; $idx < $icmp_seq_count; $idx++)
             {
                 $parts = explode(' ', $this->_raw_data[$idx]);
-                $this->_icmp_sequence[substr($parts[4], 9, strlen($parts[4]))] = substr($parts[6], 5, strlen($parts[6]));
+                $this->_icmp_sequence[substr(@$parts[4], 9, strlen(@$parts[4]))] = substr(@$parts[6], 5, strlen(@$parts[6]));
             }
             $this->_bytes_per_request = $parts[0];
             $this->_bytes_total       = (int)$parts[0] * $icmp_seq_count;
