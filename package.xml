@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!-- do not use the "Type" attribute here, that one is only for
+     generated package.xml files -->
+<Package>
+  <Name>Ping</Name>
+  <Summary>Execute ping</Summary>
+  <Maintainer>
+    <Initials>MJ</Initials>
+    <Name>Martin Jansen</Name>
+    <Email>mj@php.net</Email>
+  </Maintainer>
+  <Release>
+    <Version>0.1</Version>
+    <Date>2001-05-22</Date>
+    <Notes>
+      This is the first release (still in a very early
+      state) of the Ping package. In future versions
+      the api may change.
+    </Notes>
+  </Release>
+  <FileList>
+    <Dir>/</Dir>
+    <File>Ping.php</File>
+  </FileList>
+</Package>
