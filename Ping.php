@@ -43,7 +43,6 @@ define('NET_PING_RESULT_UNSUPPORTED_BACKEND', 4);
  *   + IRIX64
  *   + SunOS
  *   + AIX
- *   + HP-UX
  *   + OSF1
  *   + BSD/OS
  *   + OpenBSD
@@ -275,6 +274,11 @@ class Net_Ping
              $retval[1] = "";
              break;
 
+        case "hpux":
+             $retval[0] = $ttl;
+             $retval[1] = $size.$count;
+             break;
+
         default:
              $retval[0] = "";
              $retval[1] = "";
@@ -436,11 +440,16 @@ class Net_Ping
                                                         "count"     => "-n",
                                                         "quiet"     => NULL,
                                                         "size"      => "-l"
+                                                        ),
+                                    "hpux" => array    (
+                                                        "timeout"   => NULL,
+                                                        "iface"     => NULL,
+                                                        "ttl"       => "-t",
+                                                        "count"     => "-n",
+                                                        "quiet"     => NULL,
+                                                        "size"      => " "
                                                         )
-
                                );
-
-
     }
 }
 
@@ -666,6 +675,37 @@ class Net_Ping_Result
         $this->_round_trip['stddev'] = $round_trip[6];
     }
     
+    function _parseResulthpux()
+    {
+        $raw_data_len   = count($this->_raw_data);
+        $icmp_seq_count = $raw_data_len - 5;
+        /* loop from second elment to the fifths last */
+        for($idx = 1; $idx <= $icmp_seq_count; $idx++) {
+            $parts = explode(' ', $this->_raw_data[$idx]);
+            $this->_icmp_sequence[(int)substr($parts[4], 9, strlen($parts[4]))] = (int)substr($parts[5], 5, strlen($parts[5]));
+        }
+        $this->_bytes_per_request = $parts[0];
+        $this->_bytes_total       = (int)$parts[0] * $icmp_seq_count;
+        $this->_target_ip         = substr($parts[3], 0, -1);
+        $this->_ttl               = NULL; /* no ttl */
+
+        $stats = explode(',', $this->_raw_data[$raw_data_len - 2]);
+        $transmitted = explode(' ', $stats[0]);
+        $this->_transmitted = $transmitted[0];
+
+        $received = explode(' ', $stats[1]);
+        $this->_received = $received[1];
+
+        $loss = explode(' ', $stats[2]);
+        $this->_loss = (int)$loss[1];
+
+        $round_trip = explode('/', str_replace('=', '/',$this->_raw_data[$raw_data_len - 1]));
+
+        $this->_round_trip['min']    = ltrim($round_trip[3]);
+        $this->_round_trip['avg']    = $round_trip[4];
+        $this->_round_trip['max']    = $round_trip[5];
+        $this->_round_trip['stddev'] = $round_trip[6];
+    }
     /**
     * Parses the output of FreeBSD's ping command
     *
