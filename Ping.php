@@ -36,8 +36,8 @@ define('NET_PING_INVALID_ARGUMENTS',          2);
 define('NET_PING_CANT_LOCATE_PING_BINARY',    3);
 define('NET_PING_RESULT_UNSUPPORTED_BACKEND', 4);
 
-/**************************TODO*******************************************/
-/*
+
+/* TODO
  *
  * - add Net_Ping_Result parser for:
  *   + IRIX64
@@ -901,8 +901,8 @@ class Net_Ping_Result
 
         $round_trip = explode(',', str_replace('=', ',', $this->_raw_data[$raw_data_len - 1]));
         $this->_round_trip['min'] = (int)substr(trim($round_trip[1]), 0, -2);
-        $this->_round_trip['avg'] = (int)substr(trim($round_trip[3]), 0, -2);
-        $this->_round_trip['max'] = (int)substr(trim($round_trip[5]), 0, -2);
+        $this->_round_trip['max'] = (int)substr(trim($round_trip[3]), 0, -2);
+        $this->_round_trip['avg'] = (int)substr(trim($round_trip[5]), 0, -2);
     } /* function _parseResultwindows() */
 
     /**
