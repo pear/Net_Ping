@@ -45,7 +45,7 @@ return an object with ping results, make raw, ping data optional
 *                        "size"  => 32),
 *                        "ttl"   => 512)
 *                        )
-*                  );      
+*                  );
 *   var_dump($ping->ping("example.com"));
 * ?>
 *
@@ -72,7 +72,7 @@ class Net_Ping
     * @access private
     */
     var $_result = array();
-   
+
     /**
     * OS_Guess instance
     *
@@ -80,7 +80,7 @@ class Net_Ping
     * @access private
     */
     var $_OS_Guess = "";
-    
+
     /**
     * OS_Guess->getSysname result
     *
@@ -88,7 +88,7 @@ class Net_Ping
     * @access private
     */
     var $_sysname = "";
-    
+
     /**
     * Ping command arguments
     *
@@ -96,7 +96,7 @@ class Net_Ping
     * @access private
     */
     var $_args = array();
-    
+
     /**
     * Indicates if an empty array was given to setArgs (not used yet)
     *
@@ -107,13 +107,13 @@ class Net_Ping
 
     /**
     * Contains the argument->option relation
-    * 
+    *
     * @var array
     * @access private
     */
     var $_argRelation = array();
 
-    
+
     /**
     * Constructor for the Class
     *
@@ -121,9 +121,9 @@ class Net_Ping
     */
     function Net_Ping()
     {
-        $this->_OS_Guess = new OS_Guess;    
+        $this->_OS_Guess = new OS_Guess;
         $this->_sysname  = $this->_OS_Guess->getSysname();
-        
+
         $this->_setPingPath();
         $this->_initArgRelation();
     }
@@ -140,19 +140,19 @@ class Net_Ping
         if (!is_array($args)) {
             return PEAR::raiseError(PING_INVALID_ARGUMENTS);
         }
-        
+
         /* accept empty arrays, but set flag*/
         if (0 == count($args)) {
             $this->_noArgs = true;
         } else {
            $this->_noArgs = false;
         }
-        
+
         $this->_args = $args;
-        
+
         return true;
     }
-    
+
     /**
     * Sets the system's path to the ping binary
     *
@@ -164,10 +164,10 @@ class Net_Ping
             $this->_ping_path = "ping";
         } else {
             $this->_ping_path = exec("which ping"); /* FIXME: windows */
-        }    
-        
+        }
+
     }
-    
+
     /**
     * Creates the argument list according to platform differences
     *
@@ -177,7 +177,7 @@ class Net_Ping
     function _createArgList()
     {
         $retval     = array();
-        
+
         $timeout    = "";
         $iface      = "";
         $ttl        = "";
@@ -185,13 +185,13 @@ class Net_Ping
         $quiet      = "";
         $size       = "";
         $seq        = "";
-        
+
         foreach($this->_args AS $option => $value) {
             if(!empty($option) && NULL != $this->_argRelation[$this->_sysname][$option]) {
                 ${$option} = $this->_argRelation[$this->_sysname][$option]." ".$value." ";
-             }   
+             }
         }
-        
+
         switch($this->_sysname) {
 
         case "sunos":
@@ -218,26 +218,26 @@ class Net_Ping
              $retval[0] = $quiet.$count.$iface.$size.$ttl.$timeout;
              $retval[1] = "";
              break;
-             
+
         case "linux":
              $retval[0] = $quiet.$count.$ttl.$size.$timeout;
              $retval[1] = "";
              break;
-        
+
         case "windows":
              $retval[0] = $count.$ttl.$timeout;
              $retval[1] = "";
-             break;     
-             
+             break;
+
         default:
              $retval[0] = "";
              $retval[1] = "";
              break;
         }
 
-        return($retval); 
+        return($retval);
     }
-  
+
     /**
     * Execute ping
     *
@@ -247,7 +247,7 @@ class Net_Ping
     */
     function ping($host)
     {
-      
+
         $argList = $this->_createArgList();
         $cmd = $this->_ping_path." ".$argList[0]." ".$host." ".$argList[1];
         exec($cmd, $this->_result);
@@ -350,7 +350,7 @@ class Net_Ping
                                                         "size"      => "-s"
                                                         ),
 
- /* we don't know yet what's darwin's signature 
+ /* we don't know yet what's darwin's signature
                                     "darwin" => array (
                                                         "timeout"   => "-w",
                                                         "iface"     => "-I",
@@ -377,9 +377,9 @@ class Net_Ping
                                                         "size"      => NULL
                                                         )
 
-                               );                     
+                               );
 
-                                                   
+
     }
 }
 ?>
