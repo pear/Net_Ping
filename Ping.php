@@ -44,7 +44,6 @@ define('NET_PING_RESULT_UNSUPPORTED_BACKEND', 4);
  *   + SunOS
  *   + AIX
  *   + HP-UX
- *   + Darwin
  *   + OSF1
  *   + BSD/OS
  *   + OpenBSD
@@ -256,10 +255,11 @@ class Net_Ping
              $retval[0] = $quiet.$count.$ttl.$timeout;
              $retval[1] = "";
              break;
-		case "darwin":
-			 $retval[0] = $count.$timeout.$size;
-			 $retval[1] = "";
-			 break;
+        case "darwin":
+             $retval[0] = $count.$timeout.$size;
+             $retval[1] = "";
+             break;
+
         case "netbsd":
              $retval[0] = $quiet.$count.$iface.$size.$ttl.$timeout;
              $retval[1] = "";
@@ -295,7 +295,7 @@ class Net_Ping
     {
         $argList = $this->_createArgList();
         $cmd = $this->_ping_path." ".$argList[0]." ".$host." ".$argList[1];
-		exec($cmd, $this->_result);
+        exec($cmd, $this->_result);
 
         if (!is_array($this->_result)) {
             return PEAR::throwError(NET_PING_FAILED_MSG, NET_PING_FAILED);
@@ -582,39 +582,38 @@ class Net_Ping_Result
         $icmp_seq_count = $raw_data_len - 4;
 
         /* loop from second elment to the fifths last */
-        for($idx = 1; $idx < $icmp_seq_count; $idx++)
-            {
+        for($idx = 1; $idx < $icmp_seq_count; $idx++) {
                 $parts = explode(' ', $this->_raw_data[$idx]);
                 $this->_icmp_sequence[substr(@$parts[4], 9, strlen(@$parts[4]))] = substr(@$parts[6], 5, strlen(@$parts[6]));
             }
-            $this->_bytes_per_request = $parts[0];
-            $this->_bytes_total       = (int)$parts[0] * $icmp_seq_count;
-            $this->_target_ip         = substr($parts[3], 0, -1);
-            $this->_ttl               = substr($parts[5], 4, strlen($parts[3]));
+        $this->_bytes_per_request = $parts[0];
+        $this->_bytes_total       = (int)$parts[0] * $icmp_seq_count;
+        $this->_target_ip         = substr($parts[3], 0, -1);
+        $this->_ttl               = substr($parts[5], 4, strlen($parts[3]));
 
-            $stats = explode(',', $this->_raw_data[$raw_data_len - 2]);
-            $transmitted = explode(' ', $stats[0]);
-            $this->_transmitted = $transmitted[0];
+        $stats = explode(',', $this->_raw_data[$raw_data_len - 2]);
+        $transmitted = explode(' ', $stats[0]);
+        $this->_transmitted = $transmitted[0];
 
-            $received = explode(' ', $stats[1]);
-            $this->_received = $received[1];
+        $received = explode(' ', $stats[1]);
+        $this->_received = $received[1];
 
-            $loss = explode(' ', $stats[2]);
-            $this->_loss = (int)$loss[1];
+        $loss = explode(' ', $stats[2]);
+        $this->_loss = (int)$loss[1];
 
-            $round_trip = explode('/', str_replace('=', '/', substr($this->_raw_data[$raw_data_len - 1], 0, -3)));
+        $round_trip = explode('/', str_replace('=', '/', substr($this->_raw_data[$raw_data_len - 1], 0, -3)));
 
-            /* if mdev field exists, shift input one unit left */
-            if (strpos($this->_raw_data[$raw_data_len - 1], 'mdev')) {
-		/* do not forget the rtt field */
-                $this->_round_trip['min']    = ltrim($round_trip[5]);
-                $this->_round_trip['avg']    = $round_trip[6];
-                $this->_round_trip['max']    = $round_trip[7];
-            } else {
-                $this->_round_trip['min']    = ltrim($round_trip[4]);
-                $this->_round_trip['avg']    = $round_trip[5];
-                $this->_round_trip['max']    = $round_trip[6];
-            }
+        /* if mdev field exists, shift input one unit left */
+        if (strpos($this->_raw_data[$raw_data_len - 1], 'mdev')) {
+            /* do not forget the rtt field */
+            $this->_round_trip['min']    = ltrim($round_trip[5]);
+            $this->_round_trip['avg']    = $round_trip[6];
+            $this->_round_trip['max']    = $round_trip[7];
+        } else {
+            $this->_round_trip['min']    = ltrim($round_trip[4]);
+            $this->_round_trip['avg']    = $round_trip[5];
+            $this->_round_trip['max']    = $round_trip[6];
+        }
     }
 
     /**
@@ -639,33 +638,32 @@ class Net_Ping_Result
         $icmp_seq_count = $raw_data_len - 4;
 
         /* loop from second elment to the fifths last */
-        for($idx = 1; $idx < $icmp_seq_count; $idx++)
-            {
-                $parts = explode(' ', $this->_raw_data[$idx]);
-                $this->_icmp_sequence[substr($parts[4], 9, strlen($parts[4]))] = substr($parts[6], 5, strlen($parts[6]));
-            }
-            $this->_bytes_per_request = $parts[0];
-            $this->_bytes_total       = (int)$parts[0] * $icmp_seq_count;
-            $this->_target_ip         = substr($parts[3], 0, -1);
-            $this->_ttl               = substr($parts[5], 4, strlen($parts[3]));
+        for($idx = 1; $idx < $icmp_seq_count; $idx++) {
+            $parts = explode(' ', $this->_raw_data[$idx]);
+            $this->_icmp_sequence[substr($parts[4], 9, strlen($parts[4]))] = substr($parts[6], 5, strlen($parts[6]));
+        }
 
-            $stats = explode(',', $this->_raw_data[$raw_data_len - 2]);
-            $transmitted = explode(' ', $stats[0]);
-            $this->_transmitted = $transmitted[0];
+        $this->_bytes_per_request = $parts[0];
+        $this->_bytes_total       = (int)$parts[0] * $icmp_seq_count;
+        $this->_target_ip         = substr($parts[3], 0, -1);
+        $this->_ttl               = substr($parts[5], 4, strlen($parts[3]));
 
-            $received = explode(' ', $stats[1]);
-            $this->_received = $received[1];
+        $stats = explode(',', $this->_raw_data[$raw_data_len - 2]);
+        $transmitted = explode(' ', $stats[0]);
+        $this->_transmitted = $transmitted[0];
 
-            $loss = explode(' ', $stats[2]);
-            $this->_loss = (int)$loss[1];
+        $received = explode(' ', $stats[1]);
+        $this->_received = $received[1];
 
-            $round_trip = explode('/', str_replace('=', '/', substr($this->_raw_data[$raw_data_len - 1], 0, -3)));
+        $loss = explode(' ', $stats[2]);
+        $this->_loss = (int)$loss[1];
 
-            $this->_round_trip['min']    = ltrim($round_trip[3]);
-            $this->_round_trip['avg']    = $round_trip[4];
-            $this->_round_trip['max']    = $round_trip[5];
-            $this->_round_trip['stddev'] = $round_trip[6];
+        $round_trip = explode('/', str_replace('=', '/', substr($this->_raw_data[$raw_data_len - 1], 0, -3)));
 
+        $this->_round_trip['min']    = ltrim($round_trip[3]);
+        $this->_round_trip['avg']    = $round_trip[4];
+        $this->_round_trip['max']    = $round_trip[5];
+        $this->_round_trip['stddev'] = $round_trip[6];
     }
     
     /**
@@ -679,32 +677,32 @@ class Net_Ping_Result
         $icmp_seq_count = $raw_data_len - 4;
 
         /* loop from second elment to the fifths last */
-        for($idx = 1; $idx < $icmp_seq_count; $idx++)
-            {
-                $parts = explode(' ', $this->_raw_data[$idx]);
-                $this->_icmp_sequence[substr($parts[4], 9, strlen($parts[4]))] = substr($parts[6], 5, strlen($parts[6]));
-            }
-            $this->_bytes_per_request = $parts[0];
-            $this->_bytes_total       = (int)$parts[0] * $icmp_seq_count;
-            $this->_target_ip         = substr($parts[3], 0, -1);
-            $this->_ttl               = substr($parts[5], 4, strlen($parts[3]));
+        for($idx = 1; $idx < $icmp_seq_count; $idx++) {
+           $parts = explode(' ', $this->_raw_data[$idx]);
+           $this->_icmp_sequence[substr($parts[4], 9, strlen($parts[4]))] = substr($parts[6], 5, strlen($parts[6]));
+        }
 
-            $stats = explode(',', $this->_raw_data[$raw_data_len - 2]);
-            $transmitted = explode(' ', $stats[0]);
-            $this->_transmitted = $transmitted[0];
+        $this->_bytes_per_request = $parts[0];
+        $this->_bytes_total       = (int)$parts[0] * $icmp_seq_count;
+        $this->_target_ip         = substr($parts[3], 0, -1);
+        $this->_ttl               = substr($parts[5], 4, strlen($parts[3]));
 
-            $received = explode(' ', $stats[1]);
-            $this->_received = $received[1];
+        $stats = explode(',', $this->_raw_data[$raw_data_len - 2]);
+        $transmitted = explode(' ', $stats[0]);
+        $this->_transmitted = $transmitted[0];
 
-            $loss = explode(' ', $stats[2]);
-            $this->_loss = (int)$loss[1];
+        $received = explode(' ', $stats[1]);
+        $this->_received = $received[1];
 
-            $round_trip = explode('/', str_replace('=', '/', substr($this->_raw_data[$raw_data_len - 1], 0, -3)));
+        $loss = explode(' ', $stats[2]);
+        $this->_loss = (int)$loss[1];
 
-            $this->_round_trip['min']    = ltrim($round_trip[4]);
-            $this->_round_trip['avg']    = $round_trip[5];
-            $this->_round_trip['max']    = $round_trip[6];
-            $this->_round_trip['stddev'] = $round_trip[7];
+        $round_trip = explode('/', str_replace('=', '/', substr($this->_raw_data[$raw_data_len - 1], 0, -3)));
+
+        $this->_round_trip['min']    = ltrim($round_trip[4]);
+        $this->_round_trip['avg']    = $round_trip[5];
+        $this->_round_trip['max']    = $round_trip[6];
+        $this->_round_trip['stddev'] = $round_trip[7];
 
     }
 
@@ -720,8 +718,7 @@ class Net_Ping_Result
         $icmp_seq_count = $raw_data_len - 8;
 
         /* loop from fourth elment to the sixths last */
-        for($idx = 1; $idx <= $icmp_seq_count; $idx++)
-        {
+        for($idx = 1; $idx <= $icmp_seq_count; $idx++) {
             $parts = explode(' ', $this->_raw_data[$idx + 2]);
             $this->_icmp_sequence[$idx - 1] = (int)substr(end(split('=', $parts[4])), 0, -2);
 
