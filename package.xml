@@ -33,7 +33,7 @@
     <state>stable</state>
     <notes>
       * Added result object
-      * Introdiced PEAR error handling
+      * Introduced PEAR error handling
       * Rewrite to handle platform differences (2.0)
       * Added the checkHost() method (2.0)
       * Added parameter to specify maximum wait time (-w) (2.0)
