@@ -272,13 +272,13 @@ class Net_Ping
     * @return bool True on success or false otherwise
     *
     * @notes Output taken from ping of netkit-base-0.10-37
-    * FIXME!
     */
-    function _checkHost($host, $severely = true)
+    function checkHost($host, $severely = true)
     {
         $this->setArgs(array("count" => 10,
                              "size"  => 32,
-                             "quiet" => true
+                             "quiet" => null,
+                             "timeout" => 10
                              )
                        );
         $res = $this->ping($host);
