@@ -176,7 +176,7 @@ class Net_Ping
     */
     function _createArgList()
     {
-        $retval     = "";
+        $retval     = array();
         
         $timeout    = "";
         $iface      = "";
