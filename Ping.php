@@ -68,7 +68,20 @@ class Net_Ping
     function ping($host, $counts = 5, $packet_size = 32, $quiet = false, $maxwait = 10)
     {
         $q = $quiet ? '-q' : '';
-        $cmd = $this->ping_path." $q -c $counts -s $packet_size -w $maxwait $host";
+        switch(exec("uname")) {
+        
+        case "FreeBSD":
+            $cmd = $this->ping_path." $q -c $counts -t $maxwait $host";
+            break;
+        
+        case "HP-UX":
+            $cmd = $this->ping_path." $host $packet_size $counts";
+            break;
+            
+        default:
+            $cmd = $this->ping_path." $q -c $counts -s $packet_size -w $maxwait $host";
+            break;
+        }    
 
         exec($cmd, $result);
 
