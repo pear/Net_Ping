@@ -185,6 +185,7 @@ class Net_Ping
         $quiet      = "";
         $size       = "";
         $seq        = "";
+        $deadline   = "";
 
         foreach($this->_args AS $option => $value) {
             if(!empty($option) && NULL != $this->_argRelation[$this->_sysname][$option]) {
@@ -220,7 +221,7 @@ class Net_Ping
              break;
 
         case "linux":
-             $retval[0] = $quiet.$count.$ttl.$size.$timeout;
+             $retval[0] = $quiet.$deadline.$count.$ttl.$size.$timeout;
              $retval[1] = "";
              break;
 
@@ -271,37 +272,35 @@ class Net_Ping
     *                       and severely is false the function will return true
     * @return bool True on success or false otherwise
     *
-    * @notes Output taken from ping of netkit-base-0.10-37
     */
     function checkHost($host, $severely = true)
     {
         $this->setArgs(array("count" => 10,
                              "size"  => 32,
                              "quiet" => null,
-                             "timeout" => 10
+                             "deadline" => 10
                              )
                        );
         $res = $this->ping($host);
         if ($res == PING_HOST_NOT_FOUND) {
             return false;
         }
-        $line = preg_split('|\s+|', $res[3]);
-        if (!is_numeric($line[0]) || !is_numeric($line[3]) ||
-            $line[2] != 'transmitted,' || $line[5] != 'received,') {
+        if (!preg_match_all('|\d+|', $res[3], $m) || count($m[0]) < 3) {
             ob_start();
             var_dump($line);
             $rep = ob_get_contents();
             ob_end_clean();
             trigger_error("Output format seems not to be supported, please report ".
                           "the following to pear-dev@lists.php.net, including your ".
-                          "version of ping or netkit-base:\n $rep");
+                          "version of ping:\n $rep");
             return false;
         }
-        // [0] => transmitted, [3] => received
-        if ($line[0] != $line[3]) {
-            if ($line[3] == 0 || $severely) {
-                return false;
-            }
+        if ($m[0][1] == 0) {
+            return false;
+        }
+        // [0] => transmitted, [1] => received
+        if ($m[0][0] != $m[0][1] && $severely) {
+            return false;
         }
         return true;
     }
@@ -366,7 +365,8 @@ class Net_Ping
                                                         "ttl"       => "-m",
                                                         "count"     => "-c",
                                                         "quiet"     => "-q",
-                                                        "size"      => NULL
+                                                        "size"      => NULL,
+                                                        "deadline"  => "-w"
                                                         ),
                                     "windows" => array (
                                                         "timeout"   => "-w",
