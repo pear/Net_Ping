@@ -41,8 +41,6 @@ define('NET_PING_RESULT_UNSUPPORTED_BACKEND', 4);
  *
  * - add Net_Ping_Result parser for:
  *   + IRIX64
- *   + SunOS
- *   + AIX
  *   + OSF1
  *   + BSD/OS
  *   + OpenBSD
@@ -139,7 +137,7 @@ class Net_Ping
         $this->_ping_path = $ping_path;
         $this->_sysname   = $sysname;
         $this->_initArgRelation();
-    }
+    } /* function Net_Ping() */
 
     /**
     * Factory for Net_Ping
@@ -157,8 +155,8 @@ class Net_Ping
         } else {
             return new Net_Ping($ping_path, $sysname);
         }
+    } /* function factory() */
 
-    }
     /**
     * Set the arguments array
     *
@@ -182,7 +180,7 @@ class Net_Ping
         $this->_args = $args;
 
         return true;
-    }
+    } /* function setArgs() */
 
     /**
     * Sets the system's path to the ping binary
@@ -205,8 +203,7 @@ class Net_Ping
                 return $ping_path;
             }
         }
-
-    }
+    } /* function _setPingPath() */
 
     /**
     * Creates the argument list according to platform differences
@@ -246,47 +243,53 @@ class Net_Ping
                      $count = " 5 ";
                  }
              }
-             $retval[0] = $iface.$seq.$ttl;
-             $retval[1] = $size.$count;
+             $retval['pre'] = $iface.$seq.$ttl;
+             $retval['post'] = $size.$count;
              break;
 
         case "freebsd":
-             $retval[0] = $quiet.$count.$ttl.$timeout;
-             $retval[1] = "";
+             $retval['pre'] = $quiet.$count.$ttl.$timeout;
+             $retval['post'] = "";
              break;
+
         case "darwin":
-             $retval[0] = $count.$timeout.$size;
-             $retval[1] = "";
+             $retval['pre'] = $count.$timeout.$size;
+             $retval['post'] = "";
              break;
 
         case "netbsd":
-             $retval[0] = $quiet.$count.$iface.$size.$ttl.$timeout;
-             $retval[1] = "";
+             $retval['pre'] = $quiet.$count.$iface.$size.$ttl.$timeout;
+             $retval['post'] = "";
              break;
 
         case "linux":
-             $retval[0] = $quiet.$deadline.$count.$ttl.$size.$timeout;
-             $retval[1] = "";
+             $retval['pre'] = $quiet.$deadline.$count.$ttl.$size.$timeout;
+             $retval['post'] = "";
              break;
 
         case "windows":
-             $retval[0] = $count.$ttl.$timeout;
-             $retval[1] = "";
+             $retval['pre'] = $count.$ttl.$timeout;
+             $retval['post'] = "";
              break;
 
         case "hpux":
-             $retval[0] = $ttl;
-             $retval[1] = $size.$count;
+             $retval['pre'] = $ttl;
+             $retval['post'] = $size.$count;
              break;
 
+        case "aix":
+            $retval['pre'] = $count.$timeout.$ttl.$size;
+            $retval['post'] = "";
+            break;
+
         default:
-             $retval[0] = "";
-             $retval[1] = "";
+             $retval['pre'] = "";
+             $retval['post'] = "";
              break;
         }
 
         return($retval);
-    }
+    }  /* function _createArgList() */
 
     /**
     * Execute ping
@@ -298,7 +301,7 @@ class Net_Ping
     function ping($host)
     {
         $argList = $this->_createArgList();
-        $cmd = $this->_ping_path." ".$argList[0]." ".$host." ".$argList[1];
+        $cmd = $this->_ping_path." ".$argList['pre']." ".$host." ".$argList['post'];
         exec($cmd, $this->_result);
 
         if (!is_array($this->_result)) {
@@ -310,7 +313,8 @@ class Net_Ping
         } else {
             return Net_Ping_Result::factory($this->_result, $this->_sysname);
         }
-    }
+    } /* function ping() */
+
     /**
     * Check if a host is up by pinging it
     *
@@ -351,7 +355,7 @@ class Net_Ping
             return false;
         }
         return true;
-    }
+    } /* function checkHost() */
 
     /**
     * Output errors with PHP trigger_error(). You can silence the errors
@@ -362,14 +366,14 @@ class Net_Ping
     * @access private
     * @author Kai Schröder <k.schroeder@php.net>
     */
-    function raiseError($error)
+    function _raiseError($error)
     {
         if (PEAR::isError($error)) {
             $error = $error->getMessage();
         }
         trigger_error($error, E_USER_WARNING);
         return false;
-    }
+    }  /* function _raiseError() */
 
     /**
     * Creates the argument list according to platform differences
@@ -451,8 +455,17 @@ class Net_Ping
                                              "quiet"     => NULL,
                                              "size"      => " "
                                              );
-    }
-}
+
+        $this->_argRelation["aix"] = array (
+                                            "timeout"   => "-i",
+                                            "iface"     => NULL,
+                                            "ttl"       => "-T",
+                                            "count"     => "-c",
+                                            "quiet"     => NULL,
+                                            "size"      => "-s"
+                                            );
+    }  /* function _initArgRelation() */
+} /* class Net_Ping */
 
 /**
 * Container class for Net_Ping results
@@ -540,7 +553,7 @@ class Net_Ping_Result
         $this->_sysname  = $sysname;
 
         $this->_parseResult();
-    }
+    } /* function Net_Ping_Result() */
 
     /**
     * Factory for Net_Ping_Result
@@ -556,7 +569,7 @@ class Net_Ping_Result
         } else {
             return new Net_Ping_Result($result, $sysname);
         }
-    }
+    }  /* function factory() */
 
 	/**
 	* Preparation method for _parseResult
@@ -568,7 +581,8 @@ class Net_Ping_Result
 	function _prepareParseResult($sysname)
 	{
 		return in_array('_parseresult'.$sysname, array_values(get_class_methods('Net_Ping_Result')));
-	}
+	} /* function _prepareParseResult() */
+
     /**
     * Delegates the parsing routine according to $this->_sysname
     *
@@ -577,7 +591,7 @@ class Net_Ping_Result
     function _parseResult()
     {
         call_user_func(array(&$this, '_parseResult'.$this->_sysname));
-    }
+    } /* function _parseResult() */
 
     /**
     * Parses the output of Linux' ping command
@@ -623,7 +637,7 @@ class Net_Ping_Result
             $this->_round_trip['avg']    = $round_trip[5];
             $this->_round_trip['max']    = $round_trip[6];
         }
-    }
+    } /* function _parseResultlinux() */
 
     /**
     * Parses the output of NetBSD's ping command
@@ -634,7 +648,7 @@ class Net_Ping_Result
     function _parseResultnetbsd()
     {
         $this->_parseResultfreebsd();
-    }
+    } /* function _parseResultnetbsd() */
   
     /**
     * Parses the output of Darwin's ping command
@@ -673,8 +687,13 @@ class Net_Ping_Result
         $this->_round_trip['avg']    = $round_trip[4];
         $this->_round_trip['max']    = $round_trip[5];
         $this->_round_trip['stddev'] = $round_trip[6];
-    }
-    
+    } /* function _parseResultdarwin() */
+
+    /**
+    * Parses the output of HP-UX' ping command
+    *
+    * @access private
+    */   
     function _parseResulthpux()
     {
         $raw_data_len   = count($this->_raw_data);
@@ -705,7 +724,45 @@ class Net_Ping_Result
         $this->_round_trip['avg']    = $round_trip[4];
         $this->_round_trip['max']    = $round_trip[5];
         $this->_round_trip['stddev'] = $round_trip[6];
-    }
+    } /* function _parseResulthpux() */
+
+    /**
+    * Parses the output of AIX' ping command
+    *
+    * @access private
+    */   
+    function _parseResultaix()
+    {
+        $raw_data_len   = count($this->_raw_data);
+        $icmp_seq_count = $raw_data_len - 5;
+        /* loop from second elment to the fifths last */
+        for($idx = 1; $idx <= $icmp_seq_count; $idx++) {
+            $parts = explode(' ', $this->_raw_data[$idx]);
+            $this->_icmp_sequence[(int)substr($parts[4], 9, strlen($parts[4]))] = (int)substr($parts[6], 5, strlen($parts[6]));
+        }
+        $this->_bytes_per_request = $parts[0];
+        $this->_bytes_total       = (int)$parts[0] * $icmp_seq_count;
+        $this->_target_ip         = substr($parts[3], 0, -1);
+        $this->_ttl               = substr($parts[5], 4, strlen($parts[3]));
+
+        $stats = explode(',', $this->_raw_data[$raw_data_len - 2]);
+        $transmitted = explode(' ', $stats[0]);
+        $this->_transmitted = $transmitted[0];
+
+        $received = explode(' ', $stats[1]);
+        $this->_received = $received[1];
+
+        $loss = explode(' ', $stats[2]);
+        $this->_loss = (int)$loss[1];
+
+        $round_trip = explode('/', str_replace('=', '/',$this->_raw_data[$raw_data_len - 1]));
+
+        $this->_round_trip['min']    = (int)ltrim($round_trip[3]);
+        $this->_round_trip['avg']    = (int)$round_trip[4];
+        $this->_round_trip['max']    = (int)$round_trip[5];
+        $this->_round_trip['stddev'] = $round_trip[6];
+    } /* function _parseResultaix() */
+
     /**
     * Parses the output of FreeBSD's ping command
     *
@@ -743,8 +800,7 @@ class Net_Ping_Result
         $this->_round_trip['avg']    = $round_trip[5];
         $this->_round_trip['max']    = $round_trip[6];
         $this->_round_trip['stddev'] = $round_trip[7];
-
-    }
+    } /* function _parseResultfreebsd() */
 
     /**
     * Parses the output of Windows' ping command
@@ -788,7 +844,7 @@ class Net_Ping_Result
         $this->_round_trip['min'] = (int)substr(trim($round_trip[1]), 0, -2);
         $this->_round_trip['avg'] = (int)substr(trim($round_trip[3]), 0, -2);
         $this->_round_trip['max'] = (int)substr(trim($round_trip[5]), 0, -2);
-    }
+    } /* function _parseResultwindows() */
 
     /**
     * Returns a Ping_Result property
@@ -800,7 +856,7 @@ class Net_Ping_Result
     function getValue($name)
     {
         return isset($this->$name)?$this->$name:'';
-    }
+    } /* function getValue() */
 
     /**
     * Accessor for $this->_target_ip;
@@ -812,7 +868,7 @@ class Net_Ping_Result
     function getTargetIp()
     {
     	return $this->_target_ip;
-    }
+    } /* function getTargetIp() */
 
     /**
     * Accessor for $this->_icmp_sequence;
@@ -824,7 +880,7 @@ class Net_Ping_Result
     function getICMPSequence()
     {
     	return $this->_icmp_sequence;
-    }
+    } /* function getICMPSequencs() */
 
     /**
     * Accessor for $this->_bytes_per_request;
@@ -836,7 +892,7 @@ class Net_Ping_Result
     function getBytesPerRequest()
     {
     	return $this->_bytes_per_request;
-    }
+    } /* function getBytesPerRequest() */
 
     /**
     * Accessor for $this->_bytes_total;
@@ -848,7 +904,7 @@ class Net_Ping_Result
     function getBytesTotal()
     {
     	return $this->_bytes_total;
-    }
+    } /* function getBytesTotal() */
 
     /**
     * Accessor for $this->_ttl;
@@ -860,7 +916,7 @@ class Net_Ping_Result
     function getTTL()
     {
     	return $this->_ttl;
-    }
+    } /* function getTTL() */
 
     /**
     * Accessor for $this->_raw_data;
@@ -872,7 +928,7 @@ class Net_Ping_Result
     function getRawData()
     {
     	return $this->_raw_data;
-    }
+    } /* function getRawData() */
 
     /**
     * Accessor for $this->_sysname;
@@ -884,7 +940,7 @@ class Net_Ping_Result
     function getSystemName()
     {
     	return $this->_sysname;
-    }
+    } /* function getSystemName() */
 
     /**
     * Accessor for $this->_round_trip;
@@ -896,7 +952,7 @@ class Net_Ping_Result
     function getRoundTrip()
     {
     	return $this->_round_trip;
-    }
+    } /* function getRoundTrip() */
 
-}
+} /* class Net_Ping_Result */
 ?>
