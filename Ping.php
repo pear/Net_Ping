@@ -16,7 +16,10 @@
 // | Authors: Martin Jansen <mj@php.net>                                  |
 // +----------------------------------------------------------------------+
 //
-// $Id: 
+// $Id$
+
+define(PING_FAILED,"execution of ping failed");
+define(HOST_NOT_FOUND,"unknown host");
 
 /**
 * Wrapper class for ping calls
@@ -34,12 +37,10 @@
 *   api will for sure change in the future.
 *
 * @author   Martin Jansen <mj@php.net>
-* @version  0.1
+* @version  $Revision$
+* @package  Net
+* @access   public
 */
-
-define(PING_FAILED,"execution of ping failed");
-define(HOST_NOT_FOUND,"unknown host");
-
 class Net_Ping {
 
     /**
@@ -57,10 +58,11 @@ class Net_Ping {
     /**
     * Execute ping
     *
-    * @param  string hostname
-    * @param  int
-    * @param  int    ping packet size
+    * @param  string    $host           hostname
+    * @param  int       $count          count of the pings
+    * @param  int       $packet_size    ping packet size
     * @return mixed  String on error or array with the result
+    * @access public
     */
     function ping($host,$counts = 5,$packet_size = 32) {
         
