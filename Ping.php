@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: Martin Jansen <mj@php.net>                                  |
 // |          Tomas V.V.Cox <cox@idecnet.com>                             |
-// /          Jan Lehnardt  <jan@php.net>                                 /
+// |          Jan Lehnardt  <jan@php.net>                                 |
 // |                                                                      |
 // +----------------------------------------------------------------------+
 //
@@ -41,11 +41,11 @@ return an object with ping results, make raw, ping data optional
 * <?php
 *   require_once "Net_Ping/Ping.php";
 *   $ping = new Net_Ping;
-    $ping->setArgs(array("count" => 5),
-                         "size"  => 32),
-                         "ttl"   => 512)
-                         )
-                   );      
+*   $ping->setArgs(array("count" => 5),
+*                        "size"  => 32),
+*                        "ttl"   => 512)
+*                        )
+*                  );      
 *   var_dump($ping->ping("example.com"));
 * ?>
 *
@@ -314,7 +314,7 @@ class Net_Ping
                                                         "size"      => "-s"
                                                         ),
 
- /* we don't konw yet whats darwin's signature 
+ /* we don't know yet what's darwin's signature 
  
                                     "darwin" => array (
                                                         "timeout"   => "-w",
