@@ -176,7 +176,7 @@ class Net_Ping
     */
     function _createArgList()
     {
-        $ret        = "";
+        $retval     = "";
         
         $timeout    = "";
         $iface      = "";
@@ -184,6 +184,7 @@ class Net_Ping
         $count      = "";
         $quiet      = "";
         $size       = "";
+        $seq        = "";
         
         foreach($this->_args AS $option => $value) {
             if(!empty($option) && NULL != $this->_argRelation[$this->_sysname][$option]) {
@@ -193,26 +194,48 @@ class Net_Ping
         
         switch($this->_sysname) {
 
+        case "sunos":
+             if ($size || $count || $iface) {
+                 /* $size and $count must be _both_ defined */
+                 $seq = " -s ";
+                 if ($size == "") {
+                     $size = " 56 ";
+                 }
+                 if ($count == "") {
+                     $count = " 5 ";
+                 }
+             }
+             $retval[0] = $iface.$seq.$ttl;
+             $retval[1] = $size.$count;
+             break;
+
         case "freebsd":
-             return $quiet.$count.$ttl.$timeout;
+             $retval[0] = $quiet.$count.$ttl.$timeout;
+             $retval[1] = "";
              break;
 
         case "netbsd":
-             return $quiet.$count.$iface.$size.$ttl.$timeout;
+             $retval[0] = $quiet.$count.$iface.$size.$ttl.$timeout;
+             $retval[1] = "";
              break;
              
         case "linux":
-             return $quiet.$count.$ttl.$size.$timeout;
+             $retval[0] = $quiet.$count.$ttl.$size.$timeout;
+             $retval[1] = "";
              break;
         
         case "windows":
-             return $count.$ttl.$timeout;
+             $retval[0] = $count.$ttl.$timeout;
+             $retval[1] = "";
              break;     
              
         default:
-             return "";
+             $retval[0] = "";
+             $retval[1] = "";
              break;
         }
+
+        return($retval); 
     }
   
     /**
@@ -226,7 +249,7 @@ class Net_Ping
     {
       
         $argList = $this->_createArgList();
-        $cmd = $this->_ping_path." ".$argList." ".$host;
+        $cmd = $this->_ping_path." ".$argList[0]." ".$host." ".$argList[1];
         exec($cmd, $this->_result);
 
         if (!is_array($this->_result)) {
@@ -292,6 +315,14 @@ class Net_Ping
     function _initArgRelation()
     {
         $this->_argRelation = array(
+                                    "sunos" => array (
+                                                        "timeout"   => NULL,
+                                                        "ttl"       => "-t",
+                                                        "count"     => " ",
+                                                        "quiet"     => "-q",
+                                                        "size"      => " ",
+                                                        "iface"     => "-i"
+                                                        ),
                                     "freebsd" => array (
                                                         "timeout"   => "-t",
                                                         "ttl"       => "-m",
