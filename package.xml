@@ -20,14 +20,18 @@
   </maintainers>
   <release>
     <version>0.2</version>
-    <date>2001-02-28</date>
+    <date>2002-03-30</date>
     <state>alpha</state>
     <notes>
-      Added the checkHost() method
+      * Added the checkHost() method
+      * Added parameter to specify maximum wait time (-w)
     </notes>
     <filelist>
-      <dir name="." baseinstalldir="Net">
-	<file>Ping.php</file>
+      <dir name="/" baseinstalldir="Net">
+        <file role="php">Ping.php</file>
+        <dir name="tests">
+          <file role="php">01-ping.php</file>
+        </dir>
       </dir>
     </filelist>
   </release>
