@@ -119,7 +119,7 @@ foreach($oses AS $os) {
 }
 
 if (true == $err) {
-  echo "Testaces failed, see the errors above for details\n";
+  echo "Testcases failed, see the errors above for details\n";
 } else {
   echo "Testcases went through just fine, just go ahead :)\n";
 }
