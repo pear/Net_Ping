@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE package SYSTEM "../package.dtd">
 <!-- do not use the "Type" attribute here, that one is only for
      generated package.xml files -->
-<package>
+<package version="1.0">
   <name>Net_Ping</name>
   <summary>Execute ping</summary>
-  <maintainer>
-    <user>MJ</user>
-    <name>Martin Jansen</name>
-    <email>mj@php.net</email>
-  </maintainer>
+  <maintainers>
+    <maintainer>
+      <user>MJ</user>
+      <name>Martin Jansen</name>
+      <email>mj@php.net</email>
+    </maintainer>
+  </maintainers>
   <release>
     <version>0.1</version>
     <date>2001-05-22</date>
@@ -18,9 +21,10 @@
       state) of the Ping package. In future versions
       the api may change.
     </notes>
+    <filelist>
+      <dir name="." baseinstalldir="Net">
+	<file>Ping.php</file>
+      </dir>
+    </filelist>
   </release>
-  <filelist>
-    <dir>/</dir>
-    <file>Ping.php</file>
-  </filelist>
 </package>
