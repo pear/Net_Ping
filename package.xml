@@ -12,6 +12,7 @@
   <release>
     <version>0.1</version>
     <date>2001-05-22</date>
+    <state>alpha</state>
     <notes>
       This is the first release (still in a very early
       state) of the Ping package. In future versions
