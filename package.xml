@@ -28,8 +28,8 @@
     </maintainer>
   </maintainers>
   <release>
-    <version>2.3</version>
-    <date>2003-11-12</date>
+    <version>2.4-dev</version>
+    <date>2003-11-13</date>
     <state>stable</state>
     <notes>
       * Added AIX support
