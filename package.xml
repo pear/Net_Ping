@@ -28,15 +28,18 @@
     </maintainer>
   </maintainers>
   <release>
-    <version>2.4-dev</version>
-    <date>2003-11-13</date>
+    <version>2.4</version>
+    <date>2004-02-10</date>
     <state>stable</state>
     <notes>
-      * Added AIX support
-      * Added testcases for Darwin, NetBSD, FreeBSD, HP-UX and AIX
-      * Added getMin(), getMax(), getAvg(), getStddev(), 
-              getTransmitted(), getReceived()  and getLoss() methods
-      * Fixed the parsers to return correct variable types
+      * Fixed support for Debian (Bug #707) (jan)
+      * Ignore options to setArgs which are
+      unsupported by the backend (jan)
+      * Refactoring (jan)
+      * Fix path in testcase (Bug #707) (mj)
+      * Prevent a infinite exec call to ping by 
+      setting a sane default - of 3 packages 
+      to be sent (jan)
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="Net">
@@ -45,9 +48,27 @@
       <dir name="tests">
         <file role="test" name="test_result_parsers.php" />
       </dir>
+      <dir name="docs">
+	<dir name="examples">
+	  <file role="doc" name="example.php" />
+	  </dir>
+      </dir>
     </filelist>
   </release>
   <changelog>
+
+    <release>
+      <version>2.3</version>
+      <date>2003-11-13</date>
+      <state>stable</state>
+      <notes>
+	* Added AIX support
+	* Added testcases for Darwin, NetBSD, FreeBSD, HP-UX and AIX
+	* Added getMin(), getMax(), getAvg(), getStddev(), 
+        getTransmitted(), getReceived()  and getLoss() methods
+	* Fixed the parsers to return correct variable types
+      </notes>
+    </release>
 
     <release>
       <version>2.2</version>
