@@ -379,80 +379,80 @@ class Net_Ping
     */
     function _initArgRelation()
     {
-        $this->_argRelation = array(
-                                    "sunos" => array (
-                                                        "timeout"   => NULL,
-                                                        "ttl"       => "-t",
-                                                        "count"     => " ",
-                                                        "quiet"     => "-q",
-                                                        "size"      => " ",
-                                                        "iface"     => "-i"
-                                                        ),
-                                    
-                                   "freebsd" => array (
-                                                        "timeout"   => "-t",
-                                                        "ttl"       => "-m",
-                                                        "count"     => "-c",
-                                                        "quiet"     => "-q",
-                                                        "size"      => NULL,
-                                                        "iface"     => NULL
-                                                        ),
+        $this->_argRelation["sunos"] = array(
+                                             "timeout"   => NULL,
+                                             "ttl"       => "-t",
+                                             "count"     => " ",
+                                             "quiet"     => "-q",
+                                             "size"      => " ",
+                                             "iface"     => "-i"
+                                             );
 
-                                    "netbsd" => array (
-                                                        "timeout"   => "-w",
-                                                        "iface"     => "-I",
-                                                        "ttl"       => "-T",
-                                                        "count"     => "-c",
-                                                        "quiet"     => "-q",
-                                                        "size"      => "-s"
-                                                        ),
+        $this->_argRelation["freebsd"] = array (
+                                                "timeout"   => "-t",
+                                                "ttl"       => "-m",
+                                                "count"     => "-c",
+                                                "quiet"     => "-q",
+                                                "size"      => NULL,
+                                                "iface"     => NULL
+                                                );
 
-                                    "openbsd" => array (
-                                                        "timeout"   => "-w",
-                                                        "iface"     => "-I",
-                                                        "ttl"       => "-t",
-                                                        "count"     => "-c",
-                                                        "quiet"     => "-q",
-                                                        "size"      => "-s"
-                                                        ),
+        $this->_argRelation["netbsd"] = array (
+                                               "timeout"   => "-w",
+                                               "iface"     => "-I",
+                                               "ttl"       => "-T",
+                                               "count"     => "-c",
+                                               "quiet"     => "-q",
+                                               "size"      => "-s"
+                                               );
 
-                                    "darwin" => array (
-                                                        "timeout"   => "-t",
-                                                        "iface"     => NULL,
-                                                        "ttl"       => NULL,
-                                                        "count"     => "-c",
-                                                        "quiet"     => "-q",
-                                                        "size"      => NULL
-                                                        ),
-                                    "linux" => array (
-                                                        "timeout"   => "-t",
-                                                        "iface"     => NULL,
-                                                        "ttl"       => "-m",
-                                                        "count"     => "-c",
-                                                        "quiet"     => "-q",
-                                                        "size"      => "-s",
-                                                        "deadline"  => "-w"
-                                                        ),
-                                    "windows" => array (
-                                                        "timeout"   => "-w",
-                                                        "iface"     => NULL,
-                                                        "ttl"       => "-i",
-                                                        "count"     => "-n",
-                                                        "quiet"     => NULL,
-                                                        "size"      => "-l"
-                                                        ),
-                                    "hpux" => array    (
-                                                        "timeout"   => NULL,
-                                                        "iface"     => NULL,
-                                                        "ttl"       => "-t",
-                                                        "count"     => "-n",
-                                                        "quiet"     => NULL,
-                                                        "size"      => " "
-                                                        )
-                               );
+        $this->_argRelation["openbsd"] = array (
+                                                "timeout"   => "-w",
+                                                "iface"     => "-I",
+                                                "ttl"       => "-t",
+                                                "count"     => "-c",
+                                                "quiet"     => "-q",
+                                                "size"      => "-s"
+                                                );
+
+        $this->_argRelation["darwin"] = array (
+                                               "timeout"   => "-t",
+                                               "iface"     => NULL,
+                                               "ttl"       => NULL,
+                                               "count"     => "-c",
+                                               "quiet"     => "-q",
+                                               "size"      => NULL
+                                               );
+
+        $this->_argRelation["linux"] = array (
+                                              "timeout"   => "-t",
+                                              "iface"     => NULL,
+                                              "ttl"       => "-m",
+                                              "count"     => "-c",
+                                              "quiet"     => "-q",
+                                              "size"      => "-s",
+                                              "deadline"  => "-w"
+                                              );
+
+        $this->_argRelation["windows"] = array (
+                                                "timeout"   => "-w",
+                                                "iface"     => NULL,
+                                                "ttl"       => "-i",
+                                                "count"     => "-n",
+                                                "quiet"     => NULL,
+                                                "size"      => "-l"
+                                                 );
+
+        $this->_argRelation["hpux"] = array (
+                                             "timeout"   => NULL,
+                                             "iface"     => NULL,
+                                             "ttl"       => "-t",
+                                             "count"     => "-n",
+                                             "quiet"     => NULL,
+                                             "size"      => " "
+                                             );
     }
 }
-
 
 /**
 * Container class for Net_Ping results
