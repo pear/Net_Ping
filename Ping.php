@@ -77,7 +77,7 @@ class Net_Ping
         }
 
         if (count($result) == 0) {
-            return HOST_NOT_FOUND;
+            return PING_HOST_NOT_FOUND;
         } else {
             $this->result = $result;
             return $result;
