@@ -633,7 +633,7 @@ class Net_Ping_Result
 	*/
 	function _prepareParseResult($sysname)
 	{
-        $parse_methods = array_values(get_class_methods('Net_Ping_Result'));
+        $parse_methods = array_values(array_map('strtolower', get_class_methods('Net_Ping_Result')));
 
 		return in_array('_parseresult'.$sysname, $parse_methods);
 	} /* function _prepareParseResult() */
