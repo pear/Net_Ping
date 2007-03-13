@@ -16,7 +16,7 @@
 // | Authors: Martin Jansen <mj@php.net>                                  |
 // |          Tomas V.V.Cox <cox@idecnet.com>                             |
 // |          Jan Lehnardt  <jan@php.net>                                 |
-// |          Kai Schröder <k.schroeder@php.net>                          |
+// |          Kai Schrï¿½der <k.schroeder@php.net>                          |
 // +----------------------------------------------------------------------+
 //
 // $Id$
@@ -151,7 +151,7 @@ class Net_Ping
         $sysname = Net_Ping::_setSystemName();
 
         if (($ping_path = Net_Ping::_setPingPath($sysname)) == NET_PING_CANT_LOCATE_PING_BINARY) {
-            return PEAR::throwError(NET_PING_CANT_LOCATE_PING_BINARY_MSG, NET_PING_CANT_LOCATE_PING_BINARY);
+            return PEAR::raiseError(NET_PING_CANT_LOCATE_PING_BINARY_MSG, NET_PING_CANT_LOCATE_PING_BINARY);
         } else {
             return new Net_Ping($ping_path, $sysname);
         }
@@ -188,7 +188,7 @@ class Net_Ping
     function setArgs($args)
     {
         if (!is_array($args)) {
-            return PEAR::throwError(NET_PING_INVALID_ARGUMENTS_MSG, NET_PING_INVALID_ARGUMENTS);
+            return PEAR::raiseError(NET_PING_INVALID_ARGUMENTS_MSG, NET_PING_INVALID_ARGUMENTS);
         }
 
         $this->_setNoArgs($args);
@@ -349,11 +349,11 @@ class Net_Ping
         exec($cmd, $this->_result);
 
         if (!is_array($this->_result)) {
-            return PEAR::throwError(NET_PING_FAILED_MSG, NET_PING_FAILED);
+            return PEAR::raiseError(NET_PING_FAILED_MSG, NET_PING_FAILED);
         }
 
         if (count($this->_result) == 0) {
-            return PEAR::throwError(NET_PING_HOST_NOT_FOUND_MSG, NET_PING_HOST_NOT_FOUND);
+            return PEAR::raiseError(NET_PING_HOST_NOT_FOUND_MSG, NET_PING_HOST_NOT_FOUND);
         } else {
             return Net_Ping_Result::factory($this->_result, $this->_sysname);
         }
@@ -408,7 +408,7 @@ class Net_Ping
     * @param mixed $error a PEAR error or a string with the error message
     * @return bool false
     * @access private
-    * @author Kai Schröder <k.schroeder@php.net>
+    * @author Kai Schrï¿½der <k.schroeder@php.net>
     */
     function _raiseError($error)
     {
@@ -618,7 +618,7 @@ class Net_Ping_Result
     function factory($result, $sysname)
     {
         if (!Net_Ping_Result::_prepareParseResult($sysname)) {
-            return PEAR::throwError(NET_PING_RESULT_UNSUPPORTED_BACKEND_MSG, NET_PING_RESULT_UNSUPPORTED_BACKEND);
+            return PEAR::raiseError(NET_PING_RESULT_UNSUPPORTED_BACKEND_MSG, NET_PING_RESULT_UNSUPPORTED_BACKEND);
         } else {
             return new Net_Ping_Result($result, $sysname);
         }
@@ -864,7 +864,7 @@ class Net_Ping_Result
     /**
     * Parses the output of Windows' ping command
     *
-    * @author Kai Schröder <k.schroeder@php.net>
+    * @author Kai Schrï¿½der <k.schroeder@php.net>
     * @access private
     */
     function _parseResultwindows()
