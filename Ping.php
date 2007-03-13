@@ -906,6 +906,45 @@ class Net_Ping_Result
     } /* function _parseResultwindows() */
 
     /**
+    * Parses the output of sunos ping command
+    *
+    * @author AxL H. Ferriz <ahferriz@inamicsys.com>
+    * @access private
+    */
+    function _parseResultsunos()
+    {
+        $raw_data_len   = count($this->_raw_data);
+        $icmp_seq_count = $raw_data_len - 4;
+
+        /* loop from second elment to the fifths last */
+        for ($idx = 1; $idx < $icmp_seq_count; $idx++) {
+            $parts = explode(' ', $this->_raw_data[$idx]);
+        $this->_icmp_sequence[substr(@$parts[5], 9, strlen(@$parts[5])-1)] = substr(@$parts[6], 5, strlen(@$parts[6])-1);
+        }
+        $this->_bytes_per_request = $parts[0];
+        $this->_bytes_total       = (int)$parts[0] * $icmp_seq_count;
+        $this->_target_ip         = substr($parts[4], 1, -2);
+        $this->_ttl               = NULL; /* no ttl */
+
+        $stats = explode(',', $this->_raw_data[$raw_data_len - 2]);
+        $transmitted = explode(' ', $stats[0]);
+        $this->_transmitted = $transmitted[0];
+
+        $received = explode(' ', $stats[1]);
+        $this->_received = $received[1];
+
+        $loss = explode(' ', $stats[2]);
+        $this->_loss = (int)$loss[1];
+
+        $round_trip = explode(' ', $this->_raw_data[$raw_data_len - 1]);
+        $minavgmax = explode('/', $round_trip[4]);
+        $this->_round_trip['min']    = $minavgmax[0];
+        $this->_round_trip['avg']    = $minavgmax[1];
+        $this->_round_trip['max']    = $minavgmax[2];
+
+    } /* function _parseResultsunos() */
+
+    /**
     * Returns a Ping_Result property
     *
     * @param string $name property name
