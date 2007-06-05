@@ -346,6 +346,13 @@ class Net_Ping
 
         $argList = $this->_createArgList();
         $cmd = $this->_ping_path." ".$argList['pre']." ".$host." ".$argList['post'];
+
+        // since we return a new instance of Net_Ping_Result (on
+        // success), users may call the ping() method repeatedly to
+        // perform unrelated ping tests Make sure we don't have raw data
+        // from a previous call laying in the _result array.
+        $this->_result = array();
+
         exec($cmd, $this->_result);
 
         if (!is_array($this->_result)) {
