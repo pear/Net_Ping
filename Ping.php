@@ -167,10 +167,26 @@ class Net_Ping
         $OS_Guess  = new OS_Guess;
         $sysname   = $OS_Guess->getSysname();
 
-        /* Nasty hack for Debian, as it uses a custom ping version */
+        // Refine the sysname for different Linux bundles/vendors. (This
+        // should go away if OS_Guess was ever extended to give vendor
+        // and vendor-version guesses.)
+        //
+        // Bear in mind that $sysname is eventually used to craft a
+        // method name to figure out which backend gets used to parse
+        // the ping output. Elsewhere, we'll set $sysname back before
+        // that.
         if ('linux' == $sysname) {
             if (file_exists('/etc/debian_version')) {
-                $sysname = 'debian';
+                $sysname = 'linuxdebian';
+            }else if (file_exists('/etc/redhat-release')
+                     && false !== ($release= @file_get_contents('/etc/redhat-release'))
+                     )
+            {
+                if (preg_match('/release 8/i', $release)) {
+                    $sysname = 'linuxredhat8';
+                }elseif (preg_match('/release 9/i', $release)) {
+                    $sysname = 'linuxredhat9';
+                }
             }
         }
 
@@ -299,12 +315,22 @@ class Net_Ping
              $retval['post'] = "";
              break;
 
-        case "debian":
+        case "linuxdebian":
              $retval['pre'] = $quiet.$count.$ttl.$size.$timeout;
              $retval['post'] = "";
+             $this->_sysname = 'linux'; // undo linux vendor refinement hack
+             break;
 
-             /* undo nasty debian hack*/
-             $this->_sysname = 'linux';
+        case "linuxredhat8":
+             $retval['pre'] = $iface.$ttl.$count.$quiet.$size.$deadline;
+             $retval['post'] = "";
+             $this->_sysname = 'linux'; // undo linux vendor refinement hack
+             break;
+
+        case "linuxredhat9":
+             $retval['pre'] = $timeout.$iface.$ttl.$count.$quiet.$size.$deadline;
+             $retval['post'] = "";
+             $this->_sysname = 'linux'; // undo linux vendor refinement hack
              break;
 
         case "windows":
@@ -489,13 +515,33 @@ class Net_Ping
                                               "deadline"  => "-w"
                                               );
 
-        $this->_argRelation["debian"] = array (
+        $this->_argRelation["linuxdebian"] = array (
                                               "timeout"   => "-t",
                                               "iface"     => NULL,
                                               "ttl"       => "-m",
                                               "count"     => "-c",
                                               "quiet"     => "-q",
                                               "size"      => "-s",
+                                              );
+
+        $this->_argRelation["linuxredhat8"] = array (
+                                              "timeout"   => NULL,
+                                              "iface"     => "-I",
+                                              "ttl"       => "-t",
+                                              "count"     => "-c",
+                                              "quiet"     => "-q",
+                                              "size"      => "-s",
+                                              "deadline"  => "-w"
+                                              );
+
+        $this->_argRelation["linuxredhat9"] = array (
+                                              "timeout"   => "-W",
+                                              "iface"     => "-I",
+                                              "ttl"       => "-t",
+                                              "count"     => "-c",
+                                              "quiet"     => "-q",
+                                              "size"      => "-s",
+                                              "deadline"  => "-w"
                                               );
 
         $this->_argRelation["windows"] = array (

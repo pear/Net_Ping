@@ -27,12 +27,15 @@
       <role>lead</role>
     </maintainer>
   </maintainers>
-  <release>
-    <version>2.4.1</version>
-    <date>2005-12-19</date>
+   <release>
+    <version>2.4.2</version>
+    <date>2007-06-05</date>
     <state>stable</state>
     <notes>
-      * Fixed #2314
+* Bug #10788  Net_Ping::ping() multiple calls pile up output in results buffer
+   Patch by Craig Constantine (cconstantine) 
+* Bug #2006  Invalid ping arguments for RH9
+   Patch by Craig Constantine (cconstantine) 
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="Net">
@@ -49,6 +52,14 @@
     </filelist>
   </release>
   <changelog>
+  <release>
+    <version>2.4.1</version>
+    <date>2005-12-19</date>
+    <state>stable</state>
+    <notes>
+      * Fixed #2314
+    </notes>
+  </release>
    <release>
     <version>2.4</version>
     <date>2004-02-10</date>
