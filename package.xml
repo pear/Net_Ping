@@ -1,124 +1,171 @@
-<?xml version="1.0" encoding="ISO-8859-1" ?>
-<!DOCTYPE package SYSTEM "http://pear.php.net/dtd/package-1.0">
-<!-- do not use the "Type" attribute here, that one is only for
-     generated package.xml files -->
-<package version="1.0">
-  <name>Net_Ping</name>
-  <summary>Execute ping</summary>
-  <description>OS independet wrapper class for executing ping calls</description>
-  <license>PHP License</license>
-  <maintainers>
-    <maintainer>
-      <user>mj</user>
-      <name>Martin Jansen</name>
-      <email>mj@php.net</email>
-      <role>lead</role>
-    </maintainer>
-    <maintainer>
-      <user>cox</user>
-      <name>Tomas V.V.Cox</name>
-      <email>cox@idecnet.com</email>
-      <role>developer</role>
-    </maintainer>
-    <maintainer>
-      <user>jan</user>
-      <name>Jan Lehnardt</name>
-      <email>jan@php.net</email>
-      <role>lead</role>
-    </maintainer>
-  </maintainers>
-   <release>
-    <version>2.4.2</version>
-    <date>2007-06-05</date>
-    <state>stable</state>
-    <notes>
-* Bug #10788  Net_Ping::ping() multiple calls pile up output in results buffer
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.6.0" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+http://pear.php.net/dtd/tasks-1.0.xsd
+http://pear.php.net/dtd/package-2.0
+http://pear.php.net/dtd/package-2.0.xsd">
+ <name>Net_Ping</name>
+ <channel>pear.php.net</channel>
+ <summary>Execute ping</summary>
+ <description>OS independet wrapper class for executing ping calls
+ </description>
+ <lead>
+  <name>Martin Jansen</name>
+  <user>mj</user>
+  <email>mj@php.net</email>
+  <active>no</active>
+ </lead>
+ <lead>
+  <name>Jan Lehnardt</name>
+  <user>jan</user>
+  <email>jan@php.net</email>
+  <active>no</active>
+ </lead>
+ <developer>
+  <name>Tomas V.V.Cox</name>
+  <user>cox</user>
+  <email>cox@idecnet.com</email>
+  <active>no</active>
+ </developer>
+ <date>2007-06-05</date>
+ <time>22:29:46</time>
+ <version>
+  <release>2.4.2</release>
+  <api>2.4.2</api>
+ </version>
+ <stability>
+  <release>stable</release>
+  <api>stable</api>
+ </stability>
+ <license uri="http://www.php.net/license">PHP License</license>
+ <notes>* Bug #10788  Net_Ping::ping() multiple calls pile up output in results buffer
    Patch by Craig Constantine (cconstantine) 
 * Bug #2006  Invalid ping arguments for RH9
    Patch by Craig Constantine (cconstantine) 
-    </notes>
-    <filelist>
-      <dir name="/" baseinstalldir="Net">
-        <file role="php" name="Ping.php" />
-      </dir>
-      <dir name="tests">
-        <file role="test" name="test_result_parsers.php" />
-      </dir>
-      <dir name="docs">
-	<dir name="examples">
-	  <file role="doc" name="example.php" />
-	  </dir>
-      </dir>
-    </filelist>
-  </release>
-  <changelog>
+    
+ </notes>
+ <contents>
+  <dir name="/">
+   <dir name="docs">
+    <dir name="examples">
+     <file baseinstalldir="Net" name="example.php" role="doc" />
+    </dir> <!-- /docs/examples -->
+   </dir> <!-- /docs -->
+   <dir name="tests">
+    <file baseinstalldir="Net" name="test_result_parsers.php" role="test" />
+   </dir> <!-- /tests -->
+   <file baseinstalldir="Net" name="Ping.php" role="php" />
+  </dir> <!-- / -->
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>4.3.0</min>
+   </php>
+   <pearinstaller>
+    <min>1.5.4</min>
+   </pearinstaller>
+  </required>
+ </dependencies>
+ <phprelease />
+ <changelog>
   <release>
-    <version>2.4.1</version>
-    <date>2005-12-19</date>
-    <state>stable</state>
-    <notes>
-      * Fixed #2314
-    </notes>
+   <version>
+    <release>2.4.1</release>
+    <api>2.4.1</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2005-12-19</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>* Fixed #2314
+   </notes>
   </release>
-   <release>
-    <version>2.4</version>
-    <date>2004-02-10</date>
-    <state>stable</state>
-    <notes>
-      * Fixed support for Debian (Bug #707) (jan)
-      * Ignore options to setArgs which are
-      unsupported by the backend (jan)
-      * Refactoring (jan)
-      * Fix path in testcase (Bug #707) (mj)
-      * Prevent a infinite exec call to ping by
-      setting a sane default - of 3 packages
-      to be sent (jan)
-    </notes>  
-    </release>
-    <release>
-      <version>2.3</version>
-      <date>2003-11-13</date>
-      <state>stable</state>
-      <notes>
-	* Added AIX support
-	* Added testcases for Darwin, NetBSD, FreeBSD, HP-UX and AIX
-	* Added getMin(), getMax(), getAvg(), getStddev(), 
-        getTransmitted(), getReceived()  and getLoss() methods
-	* Fixed the parsers to return correct variable types
-      </notes>
-    </release>
-
-    <release>
-      <version>2.2</version>
-      <date>2003-11-10</date>
-      <state>stable</state>
-      <notes>
-	* Added darwin and hpux support
-	* Fixed minor code glitches
-	* Made code more readable
-      </notes>
-    </release>
- 
-    <release>
-      <version>2.1</version>
-      <date>2003-02-05</date>
-      <state>stable</state>
-      <notes>
-        * Added result object
-        * Introduced PEAR error handling
-      </notes>
-    </release>
-
-    <release>
-       <version>2.0</version>
-       <date>2002-05-27</date>
-       <state>beta</state>
-       <notes>
-         * Rewrite to handle platform differences
-         * Added the checkHost() method
-         * Added parameter to specify maximum wait time (-w)
-       </notes>
-    </release>
-
-  </changelog>
+  <release>
+   <version>
+    <release>2.4</release>
+    <api>2.4</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2004-02-10</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>* Fixed support for Debian (Bug #707) (jan)
+* Ignore options to setArgs which are
+unsupported by the backend (jan)
+* Refactoring (jan)
+* Fix path in testcase (Bug #707) (mj)
+* Prevent a infinite exec call to ping by
+setting a sane default - of 3 packages
+to be sent (jan)
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>2.3</release>
+    <api>2.3</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2003-11-13</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>* Added AIX support
+* Added testcases for Darwin, NetBSD, FreeBSD, HP-UX and AIX
+* Added getMin(), getMax(), getAvg(), getStddev(), 
+* Fixed the parsers to return correct variable types
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>2.2</release>
+    <api>2.2</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2003-11-10</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>* Added darwin and hpux support
+* Fixed minor code glitches
+* Made code more readable
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>2.1</release>
+    <api>2.1</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2003-02-05</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>* Added result object
+* Introduced PEAR error handling
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>2.0</release>
+    <api>2.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2002-05-27</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>* Rewrite to handle platform differences
+* Added the checkHost() method
+* Added parameter to specify maximum wait time (-w)
+   </notes>
+  </release>
+ </changelog>
 </package>
