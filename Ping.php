@@ -310,6 +310,11 @@ class Net_Ping
              $retval['post'] = "";
              break;
 
+        case "openbsd":
+             $retval['pre'] = $quiet.$count.$iface.$size.$ttl.$timeout;
+             $retval['post'] = "";
+             break;
+
         case "linux":
              $retval['pre'] = $quiet.$deadline.$count.$ttl.$size.$timeout;
              $retval['post'] = "";
