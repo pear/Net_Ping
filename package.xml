@@ -9,17 +9,23 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <description>OS independet wrapper class for executing ping calls
  </description>
  <lead>
+  <name>Craig Constantine</name>
+  <user>cconstantine</user>
+  <email>cconstantine@php.net</email>
+  <active>yes</active>
+ </lead>
+ <developer>
   <name>Martin Jansen</name>
   <user>mj</user>
   <email>mj@php.net</email>
   <active>no</active>
- </lead>
- <lead>
+ </developer>
+ <developer>
   <name>Jan Lehnardt</name>
   <user>jan</user>
   <email>jan@php.net</email>
   <active>no</active>
- </lead>
+ </developer>
  <developer>
   <name>Tomas V.V.Cox</name>
   <user>cox</user>
