@@ -6,8 +6,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <name>Net_Ping</name>
  <channel>pear.php.net</channel>
  <summary>Execute ping</summary>
- <description>OS independet wrapper class for executing ping calls
- </description>
+ <description>OS independet wrapper class for executing ping calls</description>
  <lead>
   <name>Craig Constantine</name>
   <user>cconstantine</user>
@@ -27,27 +26,27 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <active>no</active>
  </developer>
  <developer>
-  <name>Tomas V.V.Cox</name>
+  <name>Thomas V.V.Cox</name>
   <user>cox</user>
-  <email>cox@idecnet.com</email>
+  <email>cox@php.net</email>
   <active>no</active>
  </developer>
- <date>2007-06-05</date>
- <time>22:29:46</time>
+ <date>2007-07-09</date>
+ <time>09:27:25</time>
  <version>
   <release>2.4.2</release>
-  <api>2.4.2</api>
+  <api>2.4.1</api>
  </version>
  <stability>
   <release>stable</release>
   <api>stable</api>
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
- <notes>* Bug #10788  Net_Ping::ping() multiple calls pile up output in results buffer
-   Patch by Craig Constantine (cconstantine) 
-* Bug #2006  Invalid ping arguments for RH9
-   Patch by Craig Constantine (cconstantine) 
-    
+ <notes>
+ * Fix Bug #2006: Invalid ping arguments for RH9 [cconstantine]
+ * Fix Bug #10788: Net_Ping::ping() multiple calls pile up output in results buffer [cconstantine]
+ * Fix Bug #11395: Fails to pass arguments when $_system=openbsd [cconstantine]
+ * Implement Feature #11231: convert to package XML v2 [cconstantine]
  </notes>
  <contents>
   <dir name="/">
@@ -65,10 +64,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <dependencies>
   <required>
    <php>
-    <min>4.3.0</min>
+    <min>4.0.0</min>
    </php>
    <pearinstaller>
-    <min>1.5.4</min>
+    <min>1.4.0b1</min>
    </pearinstaller>
   </required>
  </dependencies>
@@ -76,7 +75,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <changelog>
   <release>
    <version>
-    <release>2.4.1</release>
+    <release>2.4.2</release>
     <api>2.4.1</api>
    </version>
    <stability>
@@ -100,13 +99,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
    <date>2004-02-10</date>
    <license uri="http://www.php.net/license">PHP License</license>
    <notes>* Fixed support for Debian (Bug #707) (jan)
-* Ignore options to setArgs which are
-unsupported by the backend (jan)
+* Ignore options to setArgs which are unsupported by the backend (jan)
 * Refactoring (jan)
 * Fix path in testcase (Bug #707) (mj)
-* Prevent a infinite exec call to ping by
-setting a sane default - of 3 packages
-to be sent (jan)
+* Prevent a infinite exec call to ping by setting a sane default - of 3 packages to be sent (jan)
    </notes>
   </release>
   <release>
