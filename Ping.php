@@ -17,6 +17,7 @@
 // |          Tomas V.V.Cox <cox@idecnet.com>                             |
 // |          Jan Lehnardt  <jan@php.net>                                 |
 // |          Kai Schr�der <k.schroeder@php.net>                          |
+// |          Craig Constantine <cconstantine@php.net>                    |
 // +----------------------------------------------------------------------+
 //
 // $Id$
@@ -36,17 +37,6 @@ define('NET_PING_INVALID_ARGUMENTS',          2);
 define('NET_PING_CANT_LOCATE_PING_BINARY',    3);
 define('NET_PING_RESULT_UNSUPPORTED_BACKEND', 4);
 
-
-/* TODO
- *
- * - add Net_Ping_Result parser for:
- *   + IRIX64
- *   + OSF1
- *   + BSD/OS
- *   + OpenBSD
- * - fix Net_Ping::checkHost()
- * - reset result buffer
- */
 
 /**
 * Wrapper class for ping calls
@@ -392,7 +382,13 @@ class Net_Ping
 
         if (count($this->_result) == 0) {
             return PEAR::raiseError(NET_PING_HOST_NOT_FOUND_MSG, NET_PING_HOST_NOT_FOUND);
-        } else {
+        }
+        else {
+            // Here we pass $this->_sysname to the factory(), but it is
+            // not actually used by the class. It's only maintained in
+            // the Net_Ping_Result class because the
+            // Net_Ping_Result::getSysName() method needs to be retained
+            // for backwards compatibility.
             return Net_Ping_Result::factory($this->_result, $this->_sysname);
         }
     } /* function ping() */
@@ -661,6 +657,10 @@ class Net_Ping_Result
     function Net_Ping_Result($result, $sysname)
     {
         $this->_raw_data = $result;
+
+        // The _sysname property is no longer used by Net_Ping_result.
+        // The property remains for backwards compatibility so the
+        // getSystemName() method continues to work.
         $this->_sysname  = $sysname;
 
         $this->_parseResult();
@@ -675,332 +675,360 @@ class Net_Ping_Result
     */
     function factory($result, $sysname)
     {
-        if (!Net_Ping_Result::_prepareParseResult($sysname)) {
-            return PEAR::raiseError(NET_PING_RESULT_UNSUPPORTED_BACKEND_MSG, NET_PING_RESULT_UNSUPPORTED_BACKEND);
-        } else {
-            return new Net_Ping_Result($result, $sysname);
-        }
+        return new Net_Ping_Result($result, $sysname);
     }  /* function factory() */
 
-	/**
-	* Preparation method for _parseResult
-	*
-	* @access private
-	* @param string $sysname OS_Guess::sysname
-	* $return bool
-	*/
-	function _prepareParseResult($sysname)
-	{
-        $parse_methods = array_values(array_map('strtolower', get_class_methods('Net_Ping_Result')));
-
-		return in_array('_parseresult'.$sysname, $parse_methods);
-	} /* function _prepareParseResult() */
-
     /**
-    * Delegates the parsing routine according to $this->_sysname
+    * Parses the raw output from the ping utility.
     *
     * @access private
     */
     function _parseResult()
     {
-        call_user_func(array(&$this, '_parseResult'.$this->_sysname));
+        // MAINTAINERS:
+        //
+        //   If you're in this class fixing or extending the parser
+        //   please add another file in the 'tests/test_parser_data/'
+        //   directory which exemplafies the problem. And of course
+        //   you'll want to run the 'tests/test_parser.php' (which
+        //   contains easy how-to instructions) to make sure you haven't
+        //   broken any existing behaviour.
+
+        // operate on a copy of the raw output since we're going to modify it
+        $data = $this->_raw_data;
+
+        // remove leading and trailing blank lines from output
+        $this->_parseResultTrimLines($data);
+
+        // separate the output into upper and lower portions,
+        // and trim those portions
+        $this->_parseResultSeparateParts($data, $upper, $lower);
+        $this->_parseResultTrimLines($upper);
+        $this->_parseResultTrimLines($lower);
+
+        // extract various things from the ping output . . .
+
+        $this->_target_ip         = $this->_parseResultDetailTargetIp($upper);
+        $this->_bytes_per_request = $this->_parseResultDetailBytesPerRequest($upper);
+        $this->_ttl               = $this->_parseResultDetailTtl($upper);
+        $this->_icmp_sequence     = $this->_parseResultDetailIcmpSequence($upper);
+        $this->_round_trip        = $this->_parseResultDetailRoundTrip($lower);
+
+        $this->_parseResultDetailTransmitted($lower);
+        $this->_parseResultDetailReceived($lower);
+        $this->_parseResultDetailLoss($lower);
+
+        if ( isset($this->_transmitted) ) {
+            $this->_bytes_total = $this->_transmitted * $this->_bytes_per_request;
+        }
+
     } /* function _parseResult() */
 
     /**
-    * Parses the output of Linux' ping command
-    *
-    * @access private
-    * @see _parseResultlinux
-    */
-    function _parseResultlinux()
+     * determinces the number of bytes sent by ping per ICMP ECHO
+     *
+     * @access private
+     */
+    function _parseResultDetailBytesPerRequest($upper)
     {
-        $raw_data_len   = count($this->_raw_data);
-        $icmp_seq_count = $raw_data_len - 4;
-
-        /* loop from second elment to the fifths last */
-        for($idx = 1; $idx < $icmp_seq_count; $idx++) {
-                $parts = explode(' ', $this->_raw_data[$idx]);
-                $this->_icmp_sequence[substr(@$parts[4], 9, strlen(@$parts[4]))] = substr(@$parts[6], 5, strlen(@$parts[6]));
+        // The ICMP ECHO REQUEST and REPLY packets should be the same
+        // size. So we can also find what we want in the output for any
+        // succesful ICMP reply which ping printed.
+        for ( $i=1; $i<count($upper); $i++ ) {
+            // anything like "64 bytes " at the front of any line in $upper??
+            if ( preg_match('/^\s*(\d+)\s*bytes/i', $upper[$i], $matches) ) {
+                return( (int)$matches[1] );
             }
-        $this->_bytes_per_request = $parts[0];
-        $this->_bytes_total       = (int)$parts[0] * $icmp_seq_count;
-        $this->_target_ip         = substr($parts[3], 0, -1);
-        $this->_ttl               = substr($parts[5], 4, strlen($parts[3]));
-
-        $stats = explode(',', $this->_raw_data[$raw_data_len - 2]);
-        $transmitted = explode(' ', $stats[0]);
-        $this->_transmitted = $transmitted[0];
-
-        $received = explode(' ', $stats[1]);
-        $this->_received = $received[1];
-
-        $loss = explode(' ', $stats[2]);
-        $this->_loss = (int)$loss[1];
-
-        $round_trip = explode('/', str_replace('=', '/', substr($this->_raw_data[$raw_data_len - 1], 0, -3)));
-
-        /* if mdev field exists, shift input one unit left */
-        if (false !== strpos($this->_raw_data[$raw_data_len - 1], 'mdev')) {
-            /* do not forget the rtt field */
-            $this->_round_trip['min']    = ltrim($round_trip[5]);
-            $this->_round_trip['avg']    = $round_trip[6];
-            $this->_round_trip['max']    = $round_trip[7];
-        } else {
-            $this->_round_trip['min']    = ltrim($round_trip[4]);
-            $this->_round_trip['avg']    = $round_trip[5];
-            $this->_round_trip['max']    = $round_trip[6];
-        }
-    } /* function _parseResultlinux() */
-
-    /**
-    * Parses the output of NetBSD's ping command
-    *
-    * @access private
-    * @see _parseResultfreebsd
-    */
-    function _parseResultnetbsd()
-    {
-        $this->_parseResultfreebsd();
-    } /* function _parseResultnetbsd() */
-  
-    /**
-    * Parses the output of Darwin's ping command
-    *
-    * @access private
-    */
-    function _parseResultdarwin()
-    {
-        $raw_data_len   = count($this->_raw_data);
-        $icmp_seq_count = $raw_data_len - 5;
-
-        /* loop from second elment to the fifths last */
-        for($idx = 1; $idx < $icmp_seq_count; $idx++) {
-            $parts = explode(' ', $this->_raw_data[$idx]);
-            $this->_icmp_sequence[substr($parts[4], 9, strlen($parts[4]))] = substr($parts[6], 5, strlen($parts[6]));
-        }
-
-        $this->_bytes_per_request = (int)$parts[0];
-        $this->_bytes_total       = (int)($this->_bytes_per_request * $icmp_seq_count);
-        $this->_target_ip         = substr($parts[3], 0, -1);
-        $this->_ttl               = (int)substr($parts[5], 4, strlen($parts[3]));
-
-        $stats = explode(',', $this->_raw_data[$raw_data_len - 2]);
-        $transmitted = explode(' ', $stats[0]);
-        $this->_transmitted = (int)$transmitted[0];
-
-        $received = explode(' ', $stats[1]);
-        $this->_received = (int)$received[1];
-
-        $loss = explode(' ', $stats[2]);
-        $this->_loss = (int)$loss[1];
-
-        $round_trip = explode('/', str_replace('=', '/', substr($this->_raw_data[$raw_data_len - 1], 0, -3)));
-
-        $this->_round_trip['min']    = (float)ltrim($round_trip[3]);
-        $this->_round_trip['avg']    = (float)$round_trip[4];
-        $this->_round_trip['max']    = (float)$round_trip[5];
-        $this->_round_trip['stddev'] = NULL; /* no stddev */
-    } /* function _parseResultdarwin() */
-
-    /**
-    * Parses the output of HP-UX' ping command
-    *
-    * @access private
-    */   
-    function _parseResulthpux()
-    {
-        $parts          = array();
-        $raw_data_len   = count($this->_raw_data);
-        $icmp_seq_count = $raw_data_len - 5;
-
-        /* loop from second elment to the fifths last */
-        for($idx = 1; $idx <= $icmp_seq_count; $idx++) {
-            $parts = explode(' ', $this->_raw_data[$idx]);
-            $this->_icmp_sequence[(int)substr($parts[4], 9, strlen($parts[4]))] = (int)substr($parts[5], 5, strlen($parts[5]));
-        }
-        $this->_bytes_per_request = (int)$parts[0];
-        $this->_bytes_total       = (int)($parts[0] * $icmp_seq_count);
-        $this->_target_ip         = NULL; /* no target ip */
-        $this->_ttl               = NULL; /* no ttl */
-
-        $stats = explode(',', $this->_raw_data[$raw_data_len - 2]);
-        $transmitted = explode(' ', $stats[0]);
-        $this->_transmitted = (int)$transmitted[0];
-
-        $received = explode(' ', $stats[1]);
-        $this->_received = (int)$received[1];
-
-        $loss = explode(' ', $stats[2]);
-        $this->_loss = (int)$loss[1];
-
-        $round_trip = explode('/', str_replace('=', '/',$this->_raw_data[$raw_data_len - 1]));
-
-        $this->_round_trip['min']    = (int)ltrim($round_trip[3]);
-        $this->_round_trip['avg']    = (int)$round_trip[4];
-        $this->_round_trip['max']    = (int)$round_trip[5];
-        $this->_round_trip['stddev'] = NULL; /* no stddev */
-    } /* function _parseResulthpux() */
-
-    /**
-    * Parses the output of AIX' ping command
-    *
-    * @access private
-    */   
-    function _parseResultaix()
-    {
-        $parts          = array();
-        $raw_data_len   = count($this->_raw_data);
-        $icmp_seq_count = $raw_data_len - 5;
-
-        /* loop from second elment to the fifths last */
-        for($idx = 1; $idx <= $icmp_seq_count; $idx++) {
-            $parts = explode(' ', $this->_raw_data[$idx]);
-            $this->_icmp_sequence[(int)substr($parts[4], 9, strlen($parts[4]))] = (int)substr($parts[6], 5, strlen($parts[6]));
-        }
-        $this->_bytes_per_request = (int)$parts[0];
-        $this->_bytes_total       = (int)($parts[0] * $icmp_seq_count);
-        $this->_target_ip         = substr($parts[3], 0, -1);
-        $this->_ttl               = (int)substr($parts[5], 4, strlen($parts[3]));
-
-        $stats = explode(',', $this->_raw_data[$raw_data_len - 2]);
-        $transmitted = explode(' ', $stats[0]);
-        $this->_transmitted = (int)$transmitted[0];
-
-        $received = explode(' ', $stats[1]);
-        $this->_received = (int)$received[1];
-
-        $loss = explode(' ', $stats[2]);
-        $this->_loss = (int)$loss[1];
-
-        $round_trip = explode('/', str_replace('=', '/',$this->_raw_data[$raw_data_len - 1]));
-
-        $this->_round_trip['min']    = (int)ltrim($round_trip[3]);
-        $this->_round_trip['avg']    = (int)$round_trip[4];
-        $this->_round_trip['max']    = (int)$round_trip[5];
-        $this->_round_trip['stddev'] = NULL; /* no stddev */
-    } /* function _parseResultaix() */
-
-    /**
-    * Parses the output of FreeBSD's ping command
-    *
-    * @access private
-    */
-    function _parseResultfreebsd()
-    {
-        $raw_data_len   = count($this->_raw_data);
-        $icmp_seq_count = $raw_data_len - 5;
-
-        /* loop from second elment to the fifths last */
-        for($idx = 1; $idx < $icmp_seq_count; $idx++) {
-           $parts = explode(' ', $this->_raw_data[$idx]);
-           $this->_icmp_sequence[substr($parts[4], 9, strlen($parts[4]))] = substr($parts[6], 5, strlen($parts[6]));
-        }
-
-        $this->_bytes_per_request = (int)$parts[0];
-        $this->_bytes_total       = (int)($parts[0] * $icmp_seq_count);
-        $this->_target_ip         = substr($parts[3], 0, -1);
-        $this->_ttl               = (int)substr($parts[5], 4, strlen($parts[3]));
-
-        $stats = explode(',', $this->_raw_data[$raw_data_len - 2]);
-        $transmitted = explode(' ', $stats[0]);
-        $this->_transmitted = (int)$transmitted[0];
-
-        $received = explode(' ', $stats[1]);
-        $this->_received = (int)$received[1];
-
-        $loss = explode(' ', $stats[2]);
-        $this->_loss = (int)$loss[1];
-
-        $round_trip = explode('/', str_replace('=', '/', substr($this->_raw_data[$raw_data_len - 1], 0, -3)));
-
-        $this->_round_trip['min']    = (float)ltrim($round_trip[4]);
-        $this->_round_trip['avg']    = (float)$round_trip[5];
-        $this->_round_trip['max']    = (float)$round_trip[6];
-        $this->_round_trip['stddev'] = (float)$round_trip[7];
-    } /* function _parseResultfreebsd() */
-
-    /**
-    * Parses the output of Windows' ping command
-    *
-    * @author Kai Schr�der <k.schroeder@php.net>
-    * @access private
-    */
-    function _parseResultwindows()
-    {
-        $raw_data_len   = count($this->_raw_data);
-        $icmp_seq_count = $raw_data_len - 8;
-
-        /* loop from fourth elment to the sixths last */
-        for($idx = 1; $idx <= $icmp_seq_count; $idx++) {
-            $parts = explode(' ', $this->_raw_data[$idx + 2]);
-            $this->_icmp_sequence[$idx - 1] = (int)substr(end(split('=', $parts[4])), 0, -2);
-
-            $ttl = (int)substr($parts[5], 4, strlen($parts[3]));
-            if ($ttl > 0 && $this->_ttl == 0) {
-                $this->_ttl = $ttl;
+            // anything like "bytes=64" in any line in the buffer??
+            if ( preg_match('/bytes=(\d+)/i', $upper[$i], $matches) ) {
+                return( (int)$matches[1] );
             }
         }
 
-       
-        $parts = explode(' ', $this->_raw_data[1]);
-        $this->_bytes_per_request = (int)$parts[4];
-        $this->_bytes_total       = $this->_bytes_per_request * $icmp_seq_count;
-        $this->_target_ip         = substr(trim($parts[2]), 1, -1);
+        // Some flavors of ping give two numbers, as in "n(m) bytes", on
+        // the first line. We'll take the first number and add 8 for the
+        // 8 bytes of header and such in an ICMP ECHO REQUEST.
+        if ( preg_match('/(\d+)\(\d+\)\D+$/', $upper[0], $matches) ) {
+            return( (int)(8+$matches[1]) );
+        }
 
-        $stats = explode(',', $this->_raw_data[$raw_data_len - 3]);
-        $transmitted = explode('=', $stats[0]);
-        $this->_transmitted = (int)$transmitted[1];
+        // Ok we'll just take the rightmost number on the first line. It
+        // could be "bytes of data" or "whole packet size". But to
+        // distinguish would require language-specific patterns. Most
+        // ping flavors just put the number of data (ie, payload) bytes
+        // if they don't specify both numbers as n(m). So we add 8 bytes
+        // for the ICMP headers.
+        if ( preg_match('/(\d+)\D+$/', $upper[0], $matches) ) {
+            return( (int)(8+$matches[1]) );
+        }
 
-        $received = explode('=', $stats[1]);
-        $this->_received = (int)$received[1];
-
-        $loss = explode('=', $stats[2]);
-        $this->_loss = (int)$loss[1];
-
-        $round_trip = explode(',', str_replace('=', ',', $this->_raw_data[$raw_data_len - 1]));
-        $this->_round_trip['min'] = (int)substr(trim($round_trip[1]), 0, -2);
-        $this->_round_trip['max'] = (int)substr(trim($round_trip[3]), 0, -2);
-        $this->_round_trip['avg'] = (int)substr(trim($round_trip[5]), 0, -2);
-    } /* function _parseResultwindows() */
+        // then we have no idea...
+        return( NULL );
+    }
 
     /**
-    * Parses the output of sunos ping command
+     * determines the round trip time (RTT) in milliseconds for each
+     * ICMP ECHO which returned. Note that the array is keyed with the
+     * sequence number of each packet; If any packets are lost, the
+     * corresponding sequence number will not be found in the array keys.
+     *
+     * @access private
+     */
+    function _parseResultDetailIcmpSequence($upper)
+    {
+        // There is a great deal of variation in the per-packet output
+        // from various flavors of ping. There are language variations
+        // (time=, rtt=, zeit=, etc), field order variations, and some
+        // don't even generate sequence numbers.
+        //
+        // Since our goal is to build an array listing the round trip
+        // times of each packet, our primary concern is to locate the
+        // time. The best way seems to be to look for an equals
+        // character, a number and then 'ms'. All the "time=" versions
+        // of ping will match this methodology, and all the pings which
+        // don't show "time=" (that I've seen examples from) also match
+        // this methodolgy.
+
+        $results = array();
+        for ( $i=1; $i<count($upper); $i++ ) {
+            // by our definition, it's not a success line if we can't
+            // find the time
+            if ( preg_match('/=\s*([\d+\.]+)\s*ms/i', $upper[$i], $matches) ) {
+                // float cast deals neatly with values like "126." which
+                // some pings generate
+                $rtt = (float)$matches[1];
+                // does the line have an obvious sequence number?
+                if ( preg_match('/icmp_seq\s*=\s*([\d+]+)/i', $upper[$i], $matches) ) {
+                    $results[$matches[1]] = $rtt;
+                }
+                else {
+                    // we use the number of the line as the sequence number
+                    $results[($i-1)] = $rtt;
+                }
+            }
+        }
+
+        return( $results );
+    }
+
+    /**
+     * Locates the "packets lost" percentage in the ping output
+     *
+     * @access private
+     */
+    function _parseResultDetailLoss($lower)
+    {
+        for ( $i=1; $i<count($lower); $i++ ) {
+            if ( preg_match('/(\d+)%/', $lower[$i], $matches) ) {
+                $this->_loss = (int)$matches[1];
+                return;
+            }
+        }
+    }
+
+    /**
+     * Locates the "packets received" in the ping output
+     *
+     * @access private
+     */
+    function _parseResultDetailReceived($lower)
+    {
+        for ( $i=1; $i<count($lower); $i++ ) {
+            // the second number on the line
+            if ( preg_match('/^\D*\d+\D+(\d+)/', $lower[$i], $matches) ) {
+                $this->_received = (int)$matches[1];
+                return;
+            }
+        }
+    }
+
+    /**
+     * determines the mininum, maximum, average and standard deviation
+     * of the round trip times.
+     *
+     * @access private
+     */
+    function _parseResultDetailRoundTrip($lower)
+    {
+        // The first pattern will match a sequence of 3 or 4
+        // alaphabet-char strings separated with slashes without
+        // presuming the order. eg, "min/max/avg" and
+        // "min/max/avg/mdev". Some ping flavors don't have the standard
+        // deviation value, and some have different names for it when
+        // present.
+        $p1 = '[a-z]+/[a-z]+/[a-z]+/?[a-z]*';
+
+        // And the pattern for 3 or 4 numbers (decimal values permitted)
+        // separated by slashes.
+        $p2 = '[0-9\.]+/[0-9\.]+/[0-9\.]+/?[0-9\.]*';
+
+        $results = array();
+        $matches = array();
+        for ( $i=(count($lower)-1); $i>=0; $i-- ) {
+            if ( preg_match('|('.$p1.')[^0-9]+('.$p2.')|i', $lower[$i], $matches) ) {
+                break;
+            }
+        }
+
+        // matches?
+        if ( count($matches) > 0 ) {
+            // we want standardized keys in the array we return. Here we
+            // look for the values (min, max, etc) and setup the return
+            // hash
+            $fields = explode('/', $matches[1]);
+            $values = explode('/', $matches[2]);
+            for ( $i=0; $i<count($fields); $i++ ) {
+                if ( preg_match('/min/i', $fields[$i]) ) {
+                    $results['min'] = (float)$values[$i];
+                }
+                else if ( preg_match('/max/i', $fields[$i]) ) {
+                    $results['max'] = (float)$values[$i];
+                }
+                else if ( preg_match('/avg/i', $fields[$i]) ) {
+                    $results['avg'] = (float)$values[$i];
+                }
+                else if ( preg_match('/dev/i', $fields[$i]) ) { # stddev or mdev
+                    $results['stddev'] = (float)$values[$i];
+                }
+            }
+            return( $results );
+        }
+
+        // So we had no luck finding RTT info in a/b/c layout. Some ping
+        // flavors give the RTT information in an "a=1 b=2 c=3" sort of
+        // layout.
+        $p3 = '[a-z]+\s*=\s*([0-9\.]+).*';
+        for ( $i=(count($lower)-1); $i>=0; $i-- ) {
+            if ( preg_match('/min.*max/i', $lower[$i]) ) {
+                if ( preg_match('/'.$p3.$p3.$p3.'/i', $lower[$i], $matches) ) {
+                    $results['min'] = $matches[1];
+                    $results['max'] = $matches[2];
+                    $results['avg'] = $matches[3];
+                }
+                break;
+            }
+        }
+
+        // either an array of min, max and avg from just above, or still
+        // the empty array from initialization way above
+        return( $results );
+    }
+
+    /**
+     * determinces the target IP address actually used by ping
+     *
+     * @access private
+     */
+    function _parseResultDetailTargetIp($upper)
+    {
+        // Grab the first IP addr we can find. Most ping flavors
+        // put the target IP on the first line, but some only list it
+        // in successful ping packet lines.
+        for ( $i=0; $i<count($upper); $i++ ) {
+            if ( preg_match('/(\d+\.\d+\.\d+\.\d+)/', $upper[$i], $matches) ) {
+                return( $matches[0] );
+            }
+        }
+
+        // no idea...
+        return( NULL );
+    }
+
+    /**
+     * Locates the "packets received" in the ping output
+     *
+     * @access private
+     */
+    function _parseResultDetailTransmitted($lower)
+    {
+        for ( $i=1; $i<count($lower); $i++ ) {
+            // the first number on the line
+            if ( preg_match('/^\D*(\d+)/', $lower[$i], $matches) ) {
+                $this->_transmitted = (int)$matches[1];
+                return;
+            }
+        }
+    }
+
+    /**
+     * determinces the time to live (TTL) actually used by ping
+     *
+     * @access private
+     */
+    function _parseResultDetailTtl($upper)
+    {
+        //extract TTL from first icmp echo line
+        for ( $i=1; $i<count($upper); $i++ ) {
+            if (   preg_match('/ttl=(\d+)/i', $upper[$i], $matches)
+                && (int)$matches[1] > 0
+                ) {
+                return( (int)$matches[1] );
+            }
+        }
+
+        // No idea what ttl was used. Probably because no packets
+        // received in reply.
+        return( NULL );
+    }
+
+    /**
+    * Modifies the array to temoves leading and trailing blank lines
     *
-    * @author AxL H. Ferriz <ahferriz@inamicsys.com>
     * @access private
     */
-    function _parseResultsunos()
+    function _parseResultTrimLines(&$data)
     {
-        $raw_data_len   = count($this->_raw_data);
-        $icmp_seq_count = $raw_data_len - 4;
-
-        /* loop from second elment to the fifths last */
-        for ($idx = 1; $idx < $icmp_seq_count; $idx++) {
-            $parts = explode(' ', $this->_raw_data[$idx]);
-        $this->_icmp_sequence[substr(@$parts[5], 9, strlen(@$parts[5])-1)] = substr(@$parts[6], 5, strlen(@$parts[6])-1);
+if ( !is_array($data) ) {
+print_r($this);
+exit;
+}
+        // Trim empty elements from the front
+        while ( preg_match('/^\s*$/', $data[0]) ) {
+            array_splice($data, 0, 1);
         }
-        $this->_bytes_per_request = $parts[0];
-        $this->_bytes_total       = (int)$parts[0] * $icmp_seq_count;
-        $this->_target_ip         = substr($parts[4], 1, -2);
-        $this->_ttl               = NULL; /* no ttl */
+        // Trim empty elements from the back
+        while ( preg_match('/^\s*$/', $data[(count($data)-1)]) ) {
+            array_splice($data, -1, 1);
+        }
+    }
 
-        $stats = explode(',', $this->_raw_data[$raw_data_len - 2]);
-        $transmitted = explode(' ', $stats[0]);
-        $this->_transmitted = $transmitted[0];
+    /**
+    * Separates the upper portion (data about individual ICMP ECHO
+    * packets) and the lower portion (statistics about the ping
+    * execution as a whole.)
+    *
+    * @access private
+    */
+    function _parseResultSeparateParts($data, &$upper, &$lower)
+    {
+        $upper = array();
+        $lower = array();
 
-        $received = explode(' ', $stats[1]);
-        $this->_received = $received[1];
+        // find the blank line closest to the end
+        $dividerIndex = count($data) - 1;
+        while ( !preg_match('/^\s*$/', $data[$dividerIndex]) ) {
+            $dividerIndex--;
+            if ( $dividerIndex < 0 ) {
+                break;
+            }
+        }
 
-        $loss = explode(' ', $stats[2]);
-        $this->_loss = (int)$loss[1];
+        // This is horrible; All the other methods assume we're able to
+        // separate the upper (preamble and per-packet output) and lower
+        // (statistics and summary output) sections.
+        if ( $dividerIndex < 0 ) {
+            $upper = $data;
+            $lower = $data;
+            return;
+        }
 
-        $round_trip = explode(' ', $this->_raw_data[$raw_data_len - 1]);
-        $minavgmax = explode('/', $round_trip[4]);
-        $this->_round_trip['min']    = $minavgmax[0];
-        $this->_round_trip['avg']    = $minavgmax[1];
-        $this->_round_trip['max']    = $minavgmax[2];
-
-    } /* function _parseResultsunos() */
+        for ( $i=0; $i<$dividerIndex; $i++ ) {
+            $upper[] = $data[$i];
+        }
+        for ( $i=(1+$dividerIndex); $i<count($data); $i++ ) {
+            $lower[] = $data[$i];
+        }
+    }
 
     /**
     * Returns a Ping_Result property
