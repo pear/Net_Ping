@@ -31,10 +31,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <email>cox@php.net</email>
   <active>no</active>
  </developer>
- <date>2007-07-09</date>
- <time>09:27:25</time>
+ <date>2007-12-27</date>
+ <time>17:55:00</time>
  <version>
-  <release>2.4.2</release>
+  <release>2.4.3</release>
   <api>2.4.1</api>
  </version>
  <stability>
@@ -43,10 +43,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
- * Fix Bug #2006: Invalid ping arguments for RH9 [cconstantine]
- * Fix Bug #10788: Net_Ping::ping() multiple calls pile up output in results buffer [cconstantine]
- * Fix Bug #11395: Fails to pass arguments when $_system=openbsd [cconstantine]
- * Implement Feature #11231: convert to package XML v2 [cconstantine]
+ * Fix Bug #758: undefined offset: when host not reachable [cconstantine]
+ * Fix Bug #2559: error handling ping output [cconstantine]
+ * Fix Bug #7735: Net_Ping suffers from many E_NOTICE errors [cconstantine]
+ * Fix Bug #12153: wrong result on Debian etch [cconstantine]
  </notes>
  <contents>
   <dir name="/">
