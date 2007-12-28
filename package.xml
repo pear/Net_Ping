@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package packagerversion="1.6.0" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
-http://pear.php.net/dtd/tasks-1.0.xsd
-http://pear.php.net/dtd/package-2.0
-http://pear.php.net/dtd/package-2.0.xsd">
+<package packagerversion="1.6.1" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
  <name>Net_Ping</name>
  <channel>pear.php.net</channel>
  <summary>Execute ping</summary>
@@ -32,7 +29,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <active>no</active>
  </developer>
  <date>2007-12-28</date>
- <time>17:55:00</time>
+ <time>14:43:24</time>
  <version>
   <release>2.4.3</release>
   <api>2.4.1</api>
@@ -43,11 +40,12 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
-* Fix Bug #758: undefined offset: when host not reachable [cconstantine]
-* Fix Bug #2559: error handling ping output [cconstantine]
-* Fix Bug #7735: Net_Ping suffers from many E_NOTICE errors [cconstantine]
-* Fix Bug #12153: wrong result on Debian etch [cconstantine]
-* Fix Bug #12659: OS detection incorrect [cconstantine]
+ * Fix Bug #758: get notice Undefined offset:  when host isnt reachable [cconstantine]
+ * Fix Bug #2559: Error handling ping output [cconstantine]
+ * Fix Bug #7735: Net_Ping suffers from many E_NOTICE errors [cconstantine]
+ * Fix Bug #8193: Wrong result on Windows [cconstantine]
+ * Fix Bug #12153: Wrong result on Debian etch [cconstantine]
+ * Fix Bug #12659: OS Detection incorrect [cconstantine]
  </notes>
  <contents>
   <dir name="/">
@@ -80,7 +78,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
     <release>stable</release>
     <api>stable</api>
    </stability>
-   <date>2007-12-27</date>
+   <date>2007-12-28</date>
    <license uri="http://www.php.net/license">PHP License</license>
    <notes>
 * Fix Bug #758: undefined offset: when host not reachable [cconstantine]
