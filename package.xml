@@ -31,7 +31,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <email>cox@php.net</email>
   <active>no</active>
  </developer>
- <date>2007-12-27</date>
+ <date>2007-12-28</date>
  <time>17:55:00</time>
  <version>
   <release>2.4.3</release>
@@ -56,9 +56,6 @@ http://pear.php.net/dtd/package-2.0.xsd">
      <file baseinstalldir="Net" name="example.php" role="doc" />
     </dir> <!-- /docs/examples -->
    </dir> <!-- /docs -->
-   <dir name="tests">
-    <file baseinstalldir="Net" name="test_result_parsers.php" role="test" />
-   </dir> <!-- /tests -->
    <file baseinstalldir="Net" name="Ping.php" role="php" />
   </dir> <!-- / -->
  </contents>
