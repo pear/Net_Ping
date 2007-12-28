@@ -166,7 +166,13 @@ class Net_Ping
         // the ping output. Elsewhere, we'll set $sysname back before
         // that.
         if ('linux' == $sysname) {
-            if (file_exists('/etc/debian_version')) {
+            if (   file_exists('/etc/lsb-release')
+                && false !== ($release=@file_get_contents('/etc/lsb-release'))
+                && preg_match('/gutsy/i', $release)
+                ) {
+                $sysname = 'linuxredhat9';
+            }
+            else if ( file_exists('/etc/debian_version') ) {
                 $sysname = 'linuxdebian';
             }else if (file_exists('/etc/redhat-release')
                      && false !== ($release= @file_get_contents('/etc/redhat-release'))
