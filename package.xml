@@ -43,10 +43,11 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
- * Fix Bug #758: undefined offset: when host not reachable [cconstantine]
- * Fix Bug #2559: error handling ping output [cconstantine]
- * Fix Bug #7735: Net_Ping suffers from many E_NOTICE errors [cconstantine]
- * Fix Bug #12153: wrong result on Debian etch [cconstantine]
+* Fix Bug #758: undefined offset: when host not reachable [cconstantine]
+* Fix Bug #2559: error handling ping output [cconstantine]
+* Fix Bug #7735: Net_Ping suffers from many E_NOTICE errors [cconstantine]
+* Fix Bug #12153: wrong result on Debian etch [cconstantine]
+* Fix Bug #12659: OS detection incorrect [cconstantine]
  </notes>
  <contents>
   <dir name="/">
@@ -73,6 +74,25 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </dependencies>
  <phprelease />
  <changelog>
+  <release>
+   <version>
+    <release>2.4.3</release>
+    <api>2.4.1</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2007-12-27</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+* Fix Bug #758: undefined offset: when host not reachable [cconstantine]
+* Fix Bug #2559: error handling ping output [cconstantine]
+* Fix Bug #7735: Net_Ping suffers from many E_NOTICE errors [cconstantine]
+* Fix Bug #12153: wrong result on Debian etch [cconstantine]
+* Fix Bug #12659: OS detection incorrect [cconstantine]
+   </notes>
+  </release>
   <release>
    <version>
     <release>2.4.2</release>
