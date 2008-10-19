@@ -513,9 +513,9 @@ class Net_Ping
                                                );
 
         $this->_argRelation["linux"] = array (
-                                              "timeout"   => "-t",
+                                              "timeout"   => "-W",
                                               "iface"     => NULL,
-                                              "ttl"       => "-m",
+                                              "ttl"       => "-t",
                                               "count"     => "-c",
                                               "quiet"     => "-q",
                                               "size"      => "-s",
@@ -523,12 +523,13 @@ class Net_Ping
                                               );
 
         $this->_argRelation["linuxdebian"] = array (
-                                              "timeout"   => "-t",
+                                              "timeout"   => "-W",
                                               "iface"     => NULL,
-                                              "ttl"       => "-m",
+                                              "ttl"       => "-t",
                                               "count"     => "-c",
                                               "quiet"     => "-q",
                                               "size"      => "-s",
+                                              "deadline"  => "-w",
                                               );
 
         $this->_argRelation["linuxredhat8"] = array (
