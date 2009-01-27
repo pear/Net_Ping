@@ -16,7 +16,7 @@
 // | Authors: Martin Jansen <mj@php.net>                                  |
 // |          Tomas V.V.Cox <cox@idecnet.com>                             |
 // |          Jan Lehnardt  <jan@php.net>                                 |
-// |          Kai Schr�der <k.schroeder@php.net>                          |
+// |          Kai Schrder <k.schroeder@php.net>                          |
 // |          Craig Constantine <cconstantine@php.net>                    |
 // +----------------------------------------------------------------------+
 //
@@ -422,20 +422,10 @@ class Net_Ping
         if (PEAR::isError($res)) {
             return false;
         }
-        if (!preg_match_all('|\d+|', $res[3], $matches) || count($matches[0]) < 3) {
-            ob_start();
-            $rep = ob_get_contents();
-            ob_end_clean();
-            trigger_error("Output format seems not to be supported, please report ".
-                          "the following to pear-dev@lists.php.net, including your ".
-                          "version of ping:\n $rep");
+        if ($res->_received == 0) {
             return false;
         }
-        if ($matches[0][1] == 0) {
-            return false;
-        }
-        // [0] => transmitted, [1] => received
-        if ($matches[0][0] != $matches[0][1] && $severely) {
+        if ($res->_received != $res->_transmitted && $severely) {
             return false;
         }
         return true;
@@ -448,7 +438,7 @@ class Net_Ping
     * @param mixed $error a PEAR error or a string with the error message
     * @return bool false
     * @access private
-    * @author Kai Schr�der <k.schroeder@php.net>
+    * @author Kai Schrder <k.schroeder@php.net>
     */
     function _raiseError($error)
     {
