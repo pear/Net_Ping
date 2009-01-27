@@ -244,7 +244,13 @@ class Net_Ping
             if (0 != $status) {
                 return NET_PING_CANT_LOCATE_PING_BINARY;
             } else {
-                return $ping_path;
+                // be certain "which" did what we expect. (ref bug #12791)
+                if ( is_executable($ping_path) ) {
+                    return $ping_path;
+                }
+                else {
+                    return NET_PING_CANT_LOCATE_PING_BINARY;
+                }
             }
         }
     } /* function _setPingPath() */
