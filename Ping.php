@@ -147,7 +147,7 @@ class Net_Ping
         }
     } /* function factory() */
 
-    /** 
+    /**
      * Resolve the system name
      *
      * @access private
@@ -187,7 +187,7 @@ class Net_Ping
         }
 
         return $sysname;
-        
+
     } /* function _setSystemName */
 
     /**
@@ -372,13 +372,13 @@ class Net_Ping
     */
     function ping($host)
     {
-        
+
         if($this->_noArgs) {
             $this->setArgs(array('count' => 3));
         }
 
         $argList = $this->_createArgList();
-        $cmd = $this->_ping_path." ".$argList['pre']." ".$host." ".$argList['post'];
+		$cmd = $this->_ping_path." ".$argList['pre']." ".escapeshellcmd($host)." ".$argList['post'];
 
         // since we return a new instance of Net_Ping_Result (on
         // success), users may call the ping() method repeatedly to
@@ -417,7 +417,7 @@ class Net_Ping
     function checkHost($host, $severely = true)
     {
     	$matches = array();
-    	
+
         $this->setArgs(array("count" => 10,
                              "size"  => 32,
                              "quiet" => null,
