@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package packagerversion="1.6.1" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+<package packagerversion="1.7.2" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
  <name>Net_Ping</name>
  <channel>pear.php.net</channel>
  <summary>Execute ping</summary>
- <description>OS independet wrapper class for executing ping calls</description>
+ <description>OS independent wrapper class for executing ping calls</description>
  <lead>
   <name>Craig Constantine</name>
   <user>cconstantine</user>
@@ -28,10 +28,10 @@
   <email>cox@php.net</email>
   <active>no</active>
  </developer>
- <date>2007-12-28</date>
- <time>14:43:24</time>
+ <date>2009-11-13</date>
+ <time>13:41:23</time>
  <version>
-  <release>2.4.3</release>
+  <release>2.4.5</release>
   <api>2.4.1</api>
  </version>
  <stability>
@@ -40,13 +40,8 @@
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
- * Fix Bug #758: get notice Undefined offset:  when host isnt reachable [cconstantine]
- * Fix Bug #2559: Error handling ping output [cconstantine]
- * Fix Bug #7735: Net_Ping suffers from many E_NOTICE errors [cconstantine]
- * Fix Bug #8193: Wrong result on Windows [cconstantine]
- * Fix Bug #12153: Wrong result on Debian etch [cconstantine]
- * Fix Bug #12659: OS Detection incorrect [cconstantine]
- </notes>
+ QA Release:
+ * Prevent command injection [saltybeagle]</notes>
  <contents>
   <dir name="/">
    <dir name="docs">
@@ -69,6 +64,35 @@
  </dependencies>
  <phprelease />
  <changelog>
+  <release>
+   <version>
+    <release>2.4.5</release>
+    <api>2.4.1</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2009-11-13</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>QA Release:
+ * Prevent command injection [saltybeagle]</notes>
+  </release>
+  <release>
+   <version>
+    <release>2.4.4</release>
+    <api>2.4.1</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2009-01-27</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>* Fix Bug #12791: Net_Ping does not properly fail when ping is not located
+* Fix Bug #14492: Bad argument list for linux
+* Fix Bug #14839: Function CheckHost fails with error every time</notes>
+  </release>
   <release>
    <version>
     <release>2.4.3</release>
