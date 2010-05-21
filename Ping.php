@@ -373,12 +373,12 @@ class Net_Ping
     function ping($host)
     {
 
-        if($this->_noArgs) {
+        if ($this->_noArgs) {
             $this->setArgs(array('count' => 3));
         }
 
         $argList = $this->_createArgList();
-		$cmd = $this->_ping_path." ".$argList['pre']." ".escapeshellcmd($host)." ".$argList['post'];
+		$cmd = $this->_ping_path." ".$argList['pre']." ".escapeshellarg($host)." ".$argList['post'];
 
         // since we return a new instance of Net_Ping_Result (on
         // success), users may call the ping() method repeatedly to
@@ -395,14 +395,13 @@ class Net_Ping
         if (count($this->_result) == 0) {
             return PEAR::raiseError(NET_PING_HOST_NOT_FOUND_MSG, NET_PING_HOST_NOT_FOUND);
         }
-        else {
-            // Here we pass $this->_sysname to the factory(), but it is
-            // not actually used by the class. It's only maintained in
-            // the Net_Ping_Result class because the
-            // Net_Ping_Result::getSysName() method needs to be retained
-            // for backwards compatibility.
-            return Net_Ping_Result::factory($this->_result, $this->_sysname);
-        }
+
+        // Here we pass $this->_sysname to the factory(), but it is
+        // not actually used by the class. It's only maintained in
+        // the Net_Ping_Result class because the
+        // Net_Ping_Result::getSysName() method needs to be retained
+        // for backwards compatibility.
+        return Net_Ping_Result::factory($this->_result, $this->_sysname);
     } /* function ping() */
 
     /**
