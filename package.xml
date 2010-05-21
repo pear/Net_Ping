@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package packagerversion="1.7.2" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+<package packagerversion="1.9.0RC1" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
  <name>Net_Ping</name>
  <channel>pear.php.net</channel>
  <summary>Execute ping</summary>
@@ -8,7 +8,7 @@
   <name>Craig Constantine</name>
   <user>cconstantine</user>
   <email>cconstantine@php.net</email>
-  <active>yes</active>
+  <active>no</active>
  </lead>
  <developer>
   <name>Martin Jansen</name>
@@ -28,10 +28,10 @@
   <email>cox@php.net</email>
   <active>no</active>
  </developer>
- <date>2009-11-13</date>
- <time>13:41:23</time>
+ <date>2010-05-21</date>
+ <time>01:49:16</time>
  <version>
-  <release>2.4.5</release>
+  <release>2.4.6</release>
   <api>2.4.1</api>
  </version>
  <stability>
@@ -40,17 +40,55 @@
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
- QA Release:
- * Prevent command injection [saltybeagle]</notes>
+QA Release:
+SVN directory structure fixes
+Utilise PHPUnit for PEAR wide test suite
+Request #17411 - Debian escapeshellarg() patch
+ </notes>
  <contents>
-  <dir name="/">
-   <dir name="docs">
-    <dir name="examples">
-     <file baseinstalldir="Net" name="example.php" role="doc" />
-    </dir> <!-- /docs/examples -->
-   </dir> <!-- /docs -->
-   <file baseinstalldir="Net" name="Ping.php" role="php" />
-  </dir> <!-- / -->
+  <dir baseinstalldir="/" name="/">
+   <file baseinstalldir="Net" md5sum="10770b98ca88a86afe7f9921bef8d44c" name="docs/examples/example.php" role="doc" />
+   <file baseinstalldir="/" md5sum="6318498d4565c24e810272356428e60d" name="Net/Ping.php" role="php" />
+   <file baseinstalldir="/" md5sum="3e88e76d1cf78dd5e42247b44aed7742" name="tests/AllTests.php" role="test" />
+   <file baseinstalldir="/" md5sum="6b8c6482e9dbe4bb91f99d08efbb58b1" name="tests/Net_Ping_ResultTest.php" role="test" />
+   <file baseinstalldir="/" md5sum="f62340c1eae84995a21a8fe5f0c20610" name="tests/test_ping.php" role="test" />
+   <file baseinstalldir="/" md5sum="14fcf881c2f92386d9beea69e62599fa" name="tests/test_parser_data/test_data_01.php" role="test" />
+   <file baseinstalldir="/" md5sum="fa6db556dce0b827d4c5d12d928d4833" name="tests/test_parser_data/test_data_02.php" role="test" />
+   <file baseinstalldir="/" md5sum="b2e2552088fc4c4d48540077f89097c4" name="tests/test_parser_data/test_data_03.php" role="test" />
+   <file baseinstalldir="/" md5sum="0268d7cd929989e2a36c2745177c6b30" name="tests/test_parser_data/test_data_04.php" role="test" />
+   <file baseinstalldir="/" md5sum="bb43f81d9e21868ea8ef88c0a145751d" name="tests/test_parser_data/test_data_05.php" role="test" />
+   <file baseinstalldir="/" md5sum="4519218260f250a814b63560e9e18ac7" name="tests/test_parser_data/test_data_06.php" role="test" />
+   <file baseinstalldir="/" md5sum="a43d4c5ed7d0bec4d66d593371b2a21c" name="tests/test_parser_data/test_data_07.php" role="test" />
+   <file baseinstalldir="/" md5sum="4c096365cd34b2a9b0f23c679d7f805f" name="tests/test_parser_data/test_data_08.php" role="test" />
+   <file baseinstalldir="/" md5sum="2e831e4ed0986043f42adb2994b24560" name="tests/test_parser_data/test_data_09.php" role="test" />
+   <file baseinstalldir="/" md5sum="84eadb2b8c3930816bab0794da63c62f" name="tests/test_parser_data/test_data_10.php" role="test" />
+   <file baseinstalldir="/" md5sum="1313f365aab45e225c4f073ba9263c05" name="tests/test_parser_data/test_data_11.php" role="test" />
+   <file baseinstalldir="/" md5sum="d8074ee34dfdba2a3d02c700a26fa927" name="tests/test_parser_data/test_data_12.php" role="test" />
+   <file baseinstalldir="/" md5sum="4a81f07281d93341bfd3eab06b5080b9" name="tests/test_parser_data/test_data_13.php" role="test" />
+   <file baseinstalldir="/" md5sum="719a20e7b3d2145fe2d072a0689a5d46" name="tests/test_parser_data/test_data_14.php" role="test" />
+   <file baseinstalldir="/" md5sum="bf531aa790e53bfd38d0ffb77598c7f3" name="tests/test_parser_data/test_data_15.php" role="test" />
+   <file baseinstalldir="/" md5sum="0f2e6ab604580c0a205d4de459c88ea1" name="tests/test_parser_data/test_data_16.php" role="test" />
+   <file baseinstalldir="/" md5sum="3c9c5cdeecfceb64c591f80f7d2d7b8d" name="tests/test_parser_data/test_data_17.php" role="test" />
+   <file baseinstalldir="/" md5sum="77ab9c11876cc9493234143c5e8c26c4" name="tests/test_parser_data/test_data_18.php" role="test" />
+   <file baseinstalldir="/" md5sum="66150ac0876bf777faf1de7ead6b0e05" name="tests/test_parser_data/test_data_19.php" role="test" />
+   <file baseinstalldir="/" md5sum="914fef522ed27e470e5a03f05b852a4f" name="tests/test_parser_data/test_data_20.php" role="test" />
+   <file baseinstalldir="/" md5sum="d02a7302fe72875f8d9ae62810be595c" name="tests/test_parser_data/test_data_21.php" role="test" />
+   <file baseinstalldir="/" md5sum="7c798bacd529576fd3915065579eb47f" name="tests/test_parser_data/test_data_22.php" role="test" />
+   <file baseinstalldir="/" md5sum="05fc21a6a32586f902f56991f9b08241" name="tests/test_parser_data/test_data_23.php" role="test" />
+   <file baseinstalldir="/" md5sum="7e714e2326dd8efebab3ca9faceade76" name="tests/test_parser_data/test_data_24.php" role="test" />
+   <file baseinstalldir="/" md5sum="0d1b0a9d3e2fb1d08463bbb97d036258" name="tests/test_parser_data/test_data_25.php" role="test" />
+   <file baseinstalldir="/" md5sum="0acd87c8716a5875212039a36aa45d23" name="tests/test_parser_data/test_data_26.php" role="test" />
+   <file baseinstalldir="/" md5sum="71504589e771cab8ec087967c8ddeb3a" name="tests/test_parser_data/test_data_27.php" role="test" />
+   <file baseinstalldir="/" md5sum="56897fcb3a15d40814b10a45458f5d46" name="tests/test_parser_data/test_data_28.php" role="test" />
+   <file baseinstalldir="/" md5sum="367434512c82c6fce4874fa56b8ac9bf" name="tests/test_parser_data/test_data_29.php" role="test" />
+   <file baseinstalldir="/" md5sum="e80e82b623e5554c6042c4297a8a1490" name="tests/test_parser_data/test_data_30.php" role="test" />
+   <file baseinstalldir="/" md5sum="f915a2fe6947228383b385d2595ee29f" name="tests/test_parser_data/test_data_31.php" role="test" />
+   <file baseinstalldir="/" md5sum="3b29f73beb9990a1c2b6e2870cf3554b" name="tests/test_parser_data/test_data_32.php" role="test" />
+   <file baseinstalldir="/" md5sum="a83b4b335985a7c0758e0bbf110a4889" name="tests/test_parser_data/test_data_33.php" role="test" />
+   <file baseinstalldir="/" md5sum="f9ad9f8f5d6058e2e0d01252ef8bda00" name="tests/test_parser_data/test_data_34.php" role="test" />
+   <file baseinstalldir="/" md5sum="fc617c4383e5f838598084911989bb6b" name="tests/test_parser_data/test_data_35.php" role="test" />
+   <file baseinstalldir="/" md5sum="08282d24fbd88cbd2da57d6265c47f24" name="tests/test_parser_data/test_data_36.php" role="test" />
+  </dir>
  </contents>
  <dependencies>
   <required>
@@ -66,32 +104,105 @@
  <changelog>
   <release>
    <version>
-    <release>2.4.5</release>
-    <api>2.4.1</api>
+    <release>2.0</release>
+    <api>2.0</api>
    </version>
    <stability>
-    <release>stable</release>
-    <api>stable</api>
+    <release>beta</release>
+    <api>beta</api>
    </stability>
-   <date>2009-11-13</date>
+   <date>2002-05-27</date>
    <license uri="http://www.php.net/license">PHP License</license>
-   <notes>QA Release:
- * Prevent command injection [saltybeagle]</notes>
+   <notes>
+* Rewrite to handle platform differences
+* Added the checkHost() method
+* Added parameter to specify maximum wait time (-w)
+   </notes>
   </release>
   <release>
    <version>
-    <release>2.4.4</release>
+    <release>2.1</release>
+    <api>2.1</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2003-02-05</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+* Added result object
+* Introduced PEAR error handling
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>2.2</release>
+    <api>2.2</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2003-11-10</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+* Added darwin and hpux support
+* Fixed minor code glitches
+* Made code more readable
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>2.3</release>
+    <api>2.3</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2003-11-13</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+* Added AIX support
+* Added testcases for Darwin, NetBSD, FreeBSD, HP-UX and AIX
+* Added getMin(), getMax(), getAvg(), getStddev(), 
+* Fixed the parsers to return correct variable types
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>2.4</release>
+    <api>2.4</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2004-02-10</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+* Fixed support for Debian (Bug #707) (jan)
+* Ignore options to setArgs which are unsupported by the backend (jan)
+* Refactoring (jan)
+* Fix path in testcase (Bug #707) (mj)
+* Prevent a infinite exec call to ping by setting a sane default - of 3 packages to be sent (jan)
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>2.4.2</release>
     <api>2.4.1</api>
    </version>
    <stability>
     <release>stable</release>
     <api>stable</api>
    </stability>
-   <date>2009-01-27</date>
+   <date>2005-12-19</date>
    <license uri="http://www.php.net/license">PHP License</license>
-   <notes>* Fix Bug #12791: Net_Ping does not properly fail when ping is not located
-* Fix Bug #14492: Bad argument list for linux
-* Fix Bug #14839: Function CheckHost fails with error every time</notes>
+   <notes>
+* Fixed #2314
+   </notes>
   </release>
   <release>
    <version>
@@ -114,98 +225,53 @@
   </release>
   <release>
    <version>
-    <release>2.4.2</release>
+    <release>2.4.4</release>
     <api>2.4.1</api>
    </version>
    <stability>
     <release>stable</release>
     <api>stable</api>
    </stability>
-   <date>2005-12-19</date>
+   <date>2009-01-27</date>
    <license uri="http://www.php.net/license">PHP License</license>
-   <notes>* Fixed #2314
+   <notes>
+* Fix Bug #12791: Net_Ping does not properly fail when ping is not located
+* Fix Bug #14492: Bad argument list for linux
+* Fix Bug #14839: Function CheckHost fails with error every time
    </notes>
   </release>
   <release>
    <version>
-    <release>2.4</release>
-    <api>2.4</api>
+    <release>2.4.5</release>
+    <api>2.4.1</api>
    </version>
    <stability>
     <release>stable</release>
     <api>stable</api>
    </stability>
-   <date>2004-02-10</date>
+   <date>2009-11-13</date>
    <license uri="http://www.php.net/license">PHP License</license>
-   <notes>* Fixed support for Debian (Bug #707) (jan)
-* Ignore options to setArgs which are unsupported by the backend (jan)
-* Refactoring (jan)
-* Fix path in testcase (Bug #707) (mj)
-* Prevent a infinite exec call to ping by setting a sane default - of 3 packages to be sent (jan)
+   <notes>
+QA Release:
+ * Prevent command injection [saltybeagle]
    </notes>
   </release>
   <release>
    <version>
-    <release>2.3</release>
-    <api>2.3</api>
+    <release>2.4.6</release>
+    <api>2.4.1</api>
    </version>
    <stability>
     <release>stable</release>
     <api>stable</api>
    </stability>
-   <date>2003-11-13</date>
+   <date>2010-05-21</date>
    <license uri="http://www.php.net/license">PHP License</license>
-   <notes>* Added AIX support
-* Added testcases for Darwin, NetBSD, FreeBSD, HP-UX and AIX
-* Added getMin(), getMax(), getAvg(), getStddev(), 
-* Fixed the parsers to return correct variable types
-   </notes>
-  </release>
-  <release>
-   <version>
-    <release>2.2</release>
-    <api>2.2</api>
-   </version>
-   <stability>
-    <release>stable</release>
-    <api>stable</api>
-   </stability>
-   <date>2003-11-10</date>
-   <license uri="http://www.php.net/license">PHP License</license>
-   <notes>* Added darwin and hpux support
-* Fixed minor code glitches
-* Made code more readable
-   </notes>
-  </release>
-  <release>
-   <version>
-    <release>2.1</release>
-    <api>2.1</api>
-   </version>
-   <stability>
-    <release>stable</release>
-    <api>stable</api>
-   </stability>
-   <date>2003-02-05</date>
-   <license uri="http://www.php.net/license">PHP License</license>
-   <notes>* Added result object
-* Introduced PEAR error handling
-   </notes>
-  </release>
-  <release>
-   <version>
-    <release>2.0</release>
-    <api>2.0</api>
-   </version>
-   <stability>
-    <release>beta</release>
-    <api>beta</api>
-   </stability>
-   <date>2002-05-27</date>
-   <license uri="http://www.php.net/license">PHP License</license>
-   <notes>* Rewrite to handle platform differences
-* Added the checkHost() method
-* Added parameter to specify maximum wait time (-w)
+   <notes>
+QA Release:
+SVN directory structure fixes
+Utilise PHPUnit for PEAR wide test suite
+Request #17411 - Debian escapeshellarg() patch
    </notes>
   </release>
  </changelog>
