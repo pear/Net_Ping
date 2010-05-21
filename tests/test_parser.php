@@ -29,9 +29,9 @@ error_reporting(E_ALL|E_NOTICE);
 // This should be run from within the "Net_Ping/tests/" directory. Make
 // sure we get the Ping.php from our parent not the one from the main
 // PEAR installation on this box.
-require_once '../Ping.php';
+require_once 'Net/Ping.php';
 
-$TPD_DIR = './test_parser_data';
+$TPD_DIR = dirname(__FILE__) . '/test_parser_data';
 
 // there should be a number of "test_data_<N>.php" files in our current
 // working directory
@@ -124,7 +124,7 @@ function test_net_ping($input, $expect) {
     // $expect has an array for ICMP sequence; detect variations in
     // Net_Ping_Result's performance
     if ( array_key_exists('icmpseq',$expect) && is_array($expect['icmpseq']) ) {
-        // detect expected seqnum/time pairs that are missing or different 
+        // detect expected seqnum/time pairs that are missing or different
         foreach ( array_keys($expect['icmpseq']) as $key ) {
             if ( ! array_key_exists($key, $icmpseq) ) {
                 print("  ICMP sequence: expected '".$key."', not seen by the Net_Ping_Result parser\n");

@@ -21,7 +21,7 @@
 
 error_reporting(E_ALL|E_NOTICE);
 
-require_once '../Ping.php';
+require_once 'Net/Ping.php';
 
 if ( !isset($argv) || count($argv)<2 || '' == $argv[1] ) {
 ?>
