@@ -1,6 +1,6 @@
 <?php
 require_once "Net/Ping.php";
-require_once 'PHPUnit/Framework.php';
+require_once 'PHPUnit/Framework/TestCase.php';
 
 class Net_Ping_ResultTest extends PHPUnit_Framework_TestCase {
 
