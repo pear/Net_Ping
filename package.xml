@@ -47,48 +47,54 @@ Request #17411 - Debian escapeshellarg() patch
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
-   <file baseinstalldir="Net" md5sum="10770b98ca88a86afe7f9921bef8d44c" name="docs/examples/example.php" role="doc" />
-   <file baseinstalldir="/" md5sum="6318498d4565c24e810272356428e60d" name="Net/Ping.php" role="php" />
-   <file baseinstalldir="/" md5sum="3e88e76d1cf78dd5e42247b44aed7742" name="tests/AllTests.php" role="test" />
-   <file baseinstalldir="/" md5sum="6b8c6482e9dbe4bb91f99d08efbb58b1" name="tests/Net_Ping_ResultTest.php" role="test" />
-   <file baseinstalldir="/" md5sum="f62340c1eae84995a21a8fe5f0c20610" name="tests/test_ping.php" role="test" />
-   <file baseinstalldir="/" md5sum="14fcf881c2f92386d9beea69e62599fa" name="tests/test_parser_data/test_data_01.php" role="test" />
-   <file baseinstalldir="/" md5sum="fa6db556dce0b827d4c5d12d928d4833" name="tests/test_parser_data/test_data_02.php" role="test" />
-   <file baseinstalldir="/" md5sum="b2e2552088fc4c4d48540077f89097c4" name="tests/test_parser_data/test_data_03.php" role="test" />
-   <file baseinstalldir="/" md5sum="0268d7cd929989e2a36c2745177c6b30" name="tests/test_parser_data/test_data_04.php" role="test" />
-   <file baseinstalldir="/" md5sum="bb43f81d9e21868ea8ef88c0a145751d" name="tests/test_parser_data/test_data_05.php" role="test" />
-   <file baseinstalldir="/" md5sum="4519218260f250a814b63560e9e18ac7" name="tests/test_parser_data/test_data_06.php" role="test" />
-   <file baseinstalldir="/" md5sum="a43d4c5ed7d0bec4d66d593371b2a21c" name="tests/test_parser_data/test_data_07.php" role="test" />
-   <file baseinstalldir="/" md5sum="4c096365cd34b2a9b0f23c679d7f805f" name="tests/test_parser_data/test_data_08.php" role="test" />
-   <file baseinstalldir="/" md5sum="2e831e4ed0986043f42adb2994b24560" name="tests/test_parser_data/test_data_09.php" role="test" />
-   <file baseinstalldir="/" md5sum="84eadb2b8c3930816bab0794da63c62f" name="tests/test_parser_data/test_data_10.php" role="test" />
-   <file baseinstalldir="/" md5sum="1313f365aab45e225c4f073ba9263c05" name="tests/test_parser_data/test_data_11.php" role="test" />
-   <file baseinstalldir="/" md5sum="d8074ee34dfdba2a3d02c700a26fa927" name="tests/test_parser_data/test_data_12.php" role="test" />
-   <file baseinstalldir="/" md5sum="4a81f07281d93341bfd3eab06b5080b9" name="tests/test_parser_data/test_data_13.php" role="test" />
-   <file baseinstalldir="/" md5sum="719a20e7b3d2145fe2d072a0689a5d46" name="tests/test_parser_data/test_data_14.php" role="test" />
-   <file baseinstalldir="/" md5sum="bf531aa790e53bfd38d0ffb77598c7f3" name="tests/test_parser_data/test_data_15.php" role="test" />
-   <file baseinstalldir="/" md5sum="0f2e6ab604580c0a205d4de459c88ea1" name="tests/test_parser_data/test_data_16.php" role="test" />
-   <file baseinstalldir="/" md5sum="3c9c5cdeecfceb64c591f80f7d2d7b8d" name="tests/test_parser_data/test_data_17.php" role="test" />
-   <file baseinstalldir="/" md5sum="77ab9c11876cc9493234143c5e8c26c4" name="tests/test_parser_data/test_data_18.php" role="test" />
-   <file baseinstalldir="/" md5sum="66150ac0876bf777faf1de7ead6b0e05" name="tests/test_parser_data/test_data_19.php" role="test" />
-   <file baseinstalldir="/" md5sum="914fef522ed27e470e5a03f05b852a4f" name="tests/test_parser_data/test_data_20.php" role="test" />
-   <file baseinstalldir="/" md5sum="d02a7302fe72875f8d9ae62810be595c" name="tests/test_parser_data/test_data_21.php" role="test" />
-   <file baseinstalldir="/" md5sum="7c798bacd529576fd3915065579eb47f" name="tests/test_parser_data/test_data_22.php" role="test" />
-   <file baseinstalldir="/" md5sum="05fc21a6a32586f902f56991f9b08241" name="tests/test_parser_data/test_data_23.php" role="test" />
-   <file baseinstalldir="/" md5sum="7e714e2326dd8efebab3ca9faceade76" name="tests/test_parser_data/test_data_24.php" role="test" />
-   <file baseinstalldir="/" md5sum="0d1b0a9d3e2fb1d08463bbb97d036258" name="tests/test_parser_data/test_data_25.php" role="test" />
-   <file baseinstalldir="/" md5sum="0acd87c8716a5875212039a36aa45d23" name="tests/test_parser_data/test_data_26.php" role="test" />
-   <file baseinstalldir="/" md5sum="71504589e771cab8ec087967c8ddeb3a" name="tests/test_parser_data/test_data_27.php" role="test" />
-   <file baseinstalldir="/" md5sum="56897fcb3a15d40814b10a45458f5d46" name="tests/test_parser_data/test_data_28.php" role="test" />
-   <file baseinstalldir="/" md5sum="367434512c82c6fce4874fa56b8ac9bf" name="tests/test_parser_data/test_data_29.php" role="test" />
-   <file baseinstalldir="/" md5sum="e80e82b623e5554c6042c4297a8a1490" name="tests/test_parser_data/test_data_30.php" role="test" />
-   <file baseinstalldir="/" md5sum="f915a2fe6947228383b385d2595ee29f" name="tests/test_parser_data/test_data_31.php" role="test" />
-   <file baseinstalldir="/" md5sum="3b29f73beb9990a1c2b6e2870cf3554b" name="tests/test_parser_data/test_data_32.php" role="test" />
-   <file baseinstalldir="/" md5sum="a83b4b335985a7c0758e0bbf110a4889" name="tests/test_parser_data/test_data_33.php" role="test" />
-   <file baseinstalldir="/" md5sum="f9ad9f8f5d6058e2e0d01252ef8bda00" name="tests/test_parser_data/test_data_34.php" role="test" />
-   <file baseinstalldir="/" md5sum="fc617c4383e5f838598084911989bb6b" name="tests/test_parser_data/test_data_35.php" role="test" />
-   <file baseinstalldir="/" md5sum="08282d24fbd88cbd2da57d6265c47f24" name="tests/test_parser_data/test_data_36.php" role="test" />
-  </dir>
+    <dir name="examples">
+      <file md5sum="10770b98ca88a86afe7f9921bef8d44c" name="example.php" role="doc" />
+    </dir> <!-- /examples -->
+    <dir name="tests">
+      <dir name="test_parser_data">
+        <file md5sum="14fcf881c2f92386d9beea69e62599fa" name="test_data_01.php" role="test" />
+        <file md5sum="fa6db556dce0b827d4c5d12d928d4833" name="test_data_02.php" role="test" />
+        <file md5sum="b2e2552088fc4c4d48540077f89097c4" name="test_data_03.php" role="test" />
+        <file md5sum="0268d7cd929989e2a36c2745177c6b30" name="test_data_04.php" role="test" />
+        <file md5sum="bb43f81d9e21868ea8ef88c0a145751d" name="test_data_05.php" role="test" />
+        <file md5sum="4519218260f250a814b63560e9e18ac7" name="test_data_06.php" role="test" />
+        <file md5sum="a43d4c5ed7d0bec4d66d593371b2a21c" name="test_data_07.php" role="test" />
+        <file md5sum="4c096365cd34b2a9b0f23c679d7f805f" name="test_data_08.php" role="test" />
+        <file md5sum="2e831e4ed0986043f42adb2994b24560" name="test_data_09.php" role="test" />
+        <file md5sum="84eadb2b8c3930816bab0794da63c62f" name="test_data_10.php" role="test" />
+        <file md5sum="1313f365aab45e225c4f073ba9263c05" name="test_data_11.php" role="test" />
+        <file md5sum="d8074ee34dfdba2a3d02c700a26fa927" name="test_data_12.php" role="test" />
+        <file md5sum="4a81f07281d93341bfd3eab06b5080b9" name="test_data_13.php" role="test" />
+        <file md5sum="719a20e7b3d2145fe2d072a0689a5d46" name="test_data_14.php" role="test" />
+        <file md5sum="bf531aa790e53bfd38d0ffb77598c7f3" name="test_data_15.php" role="test" />
+        <file md5sum="0f2e6ab604580c0a205d4de459c88ea1" name="test_data_16.php" role="test" />
+        <file md5sum="3c9c5cdeecfceb64c591f80f7d2d7b8d" name="test_data_17.php" role="test" />
+        <file md5sum="77ab9c11876cc9493234143c5e8c26c4" name="test_data_18.php" role="test" />
+        <file md5sum="66150ac0876bf777faf1de7ead6b0e05" name="test_data_19.php" role="test" />
+        <file md5sum="914fef522ed27e470e5a03f05b852a4f" name="test_data_20.php" role="test" />
+        <file md5sum="d02a7302fe72875f8d9ae62810be595c" name="test_data_21.php" role="test" />
+        <file md5sum="7c798bacd529576fd3915065579eb47f" name="test_data_22.php" role="test" />
+        <file md5sum="05fc21a6a32586f902f56991f9b08241" name="test_data_23.php" role="test" />
+        <file md5sum="7e714e2326dd8efebab3ca9faceade76" name="test_data_24.php" role="test" />
+        <file md5sum="0d1b0a9d3e2fb1d08463bbb97d036258" name="test_data_25.php" role="test" />
+        <file md5sum="0acd87c8716a5875212039a36aa45d23" name="test_data_26.php" role="test" />
+        <file md5sum="71504589e771cab8ec087967c8ddeb3a" name="test_data_27.php" role="test" />
+        <file md5sum="56897fcb3a15d40814b10a45458f5d46" name="test_data_28.php" role="test" />
+        <file md5sum="367434512c82c6fce4874fa56b8ac9bf" name="test_data_29.php" role="test" />
+        <file md5sum="e80e82b623e5554c6042c4297a8a1490" name="test_data_30.php" role="test" />
+        <file md5sum="f915a2fe6947228383b385d2595ee29f" name="test_data_31.php" role="test" />
+        <file md5sum="3b29f73beb9990a1c2b6e2870cf3554b" name="test_data_32.php" role="test" />
+        <file md5sum="a83b4b335985a7c0758e0bbf110a4889" name="test_data_33.php" role="test" />
+        <file md5sum="f9ad9f8f5d6058e2e0d01252ef8bda00" name="test_data_34.php" role="test" />
+        <file md5sum="fc617c4383e5f838598084911989bb6b" name="test_data_35.php" role="test" />
+        <file md5sum="08282d24fbd88cbd2da57d6265c47f24" name="test_data_36.php" role="test" />
+      </dir> <!-- /tests/test_parser_data -->
+      <file md5sum="3e88e76d1cf78dd5e42247b44aed7742" name="AllTests.php" role="test" />
+      <file md5sum="6b8c6482e9dbe4bb91f99d08efbb58b1" name="Net_Ping_ResultTest.php" role="test" />
+      <file md5sum="f62340c1eae84995a21a8fe5f0c20610" name="test_ping.php" role="test" />
+    </dir> <!-- /tests -->
+    <file md5sum="6318498d4565c24e810272356428e60d" name="Net/Ping.php" role="php" />
+  </dir> <!-- / -->
  </contents>
  <dependencies>
   <required>
@@ -166,7 +172,7 @@ Request #17411 - Debian escapeshellarg() patch
    <notes>
 * Added AIX support
 * Added testcases for Darwin, NetBSD, FreeBSD, HP-UX and AIX
-* Added getMin(), getMax(), getAvg(), getStddev(), 
+* Added getMin(), getMax(), getAvg(), getStddev(),
 * Fixed the parsers to return correct variable types
    </notes>
   </release>
