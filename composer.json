@@ -23,7 +23,7 @@
     ],
     "autoload": {
         "psr-0": {
-            "Net_Ping": "./"
+            "Net": "./"
         }
     },
     "description": "More info available on: http://pear.php.net/package/Net_Ping",
