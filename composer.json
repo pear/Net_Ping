@@ -1,0 +1,46 @@
+{
+    "authors": [
+        {
+            "email": "cconstantine@php.net",
+            "name": "Craig Constantine",
+            "role": "Lead"
+        },
+        {
+            "email": "mj@php.net",
+            "name": "Martin Jansen",
+            "role": "Developer"
+        },
+        {
+            "email": "jan@php.net",
+            "name": "Jan Lehnardt",
+            "role": "Developer"
+        },
+        {
+            "email": "cox@php.net",
+            "name": "Thomas V.V.Cox",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "Net": "./"
+        }
+    },
+    "description": "More info available on: http://pear.php.net/package/Net_Ping",
+    "include-path": [
+        "./"
+    ],
+    "license": "PHP License",
+    "name": "pear/net_ping",
+    "support": {
+        "issues": "http://pear.php.net/bugs/search.php?cmd=display&package_name[]=Net_Ping",
+        "source": "https://github.com/pear/Net_Ping"
+    },
+    "type": "library",
+    "require": {
+        "pear/pear_exception": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    }
+}
