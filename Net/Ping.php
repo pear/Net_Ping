@@ -122,7 +122,7 @@ class Net_Ping
     *
     * @access private
     */
-    function Net_Ping($ping_path, $sysname)
+    function __construct($ping_path, $sysname)
     {
         $this->_ping_path = $ping_path;
         $this->_sysname   = $sysname;
@@ -134,7 +134,7 @@ class Net_Ping
     *
     * @access public
     */
-    function factory()
+    static function factory()
     {
         $ping_path = '';
 
@@ -152,7 +152,7 @@ class Net_Ping
      *
      * @access private
      */
-    function _setSystemName()
+    static function _setSystemName()
     {
         $OS_Guess  = new OS_Guess;
         $sysname   = $OS_Guess->getSysname();
@@ -231,7 +231,7 @@ class Net_Ping
     *
     * @access private
     */
-    function _setPingPath($sysname)
+    static function _setPingPath($sysname)
     {
         $status    = '';
         $output    = array();
@@ -656,7 +656,7 @@ class Net_Ping_Result
     *
     * @access private
     */
-    function Net_Ping_Result($result, $sysname)
+    function __construct($result, $sysname)
     {
         $this->_raw_data = $result;
 
@@ -675,7 +675,7 @@ class Net_Ping_Result
     * @param array $result Net_Ping result
     * @param string $sysname OS_Guess::sysname
     */
-    function factory($result, $sysname)
+    static function factory($result, $sysname)
     {
         return new Net_Ping_Result($result, $sysname);
     }  /* function factory() */
