@@ -1,5 +1,13 @@
 {
-    "authors": [
+    "name": "mrpetovan/net_ping",
+	"type": "library",
+    "description": "More info available on: http://pear.php.net/package/Net_Ping",
+    "license": "PHP License",
+    "support": {
+        "issues": "http://pear.php.net/bugs/search.php?cmd=display&package_name[]=Net_Ping",
+        "source": "https://github.com/MrPetovan/Net_Ping"
+    },
+	"authors": [
         {
             "email": "cconstantine@php.net",
             "name": "Craig Constantine",
@@ -19,24 +27,21 @@
             "email": "cox@php.net",
             "name": "Thomas V.V.Cox",
             "role": "Developer"
+        },
+        {
+            "email": "hypolite@mrpetovan.com",
+            "name": "Hypolite Petovan",
+            "role": "Maintainer"
         }
+    ],
+    "include-path": [
+        "./"
     ],
     "autoload": {
         "psr-0": {
             "Net": "./"
         }
     },
-    "description": "More info available on: http://pear.php.net/package/Net_Ping",
-    "include-path": [
-        "./"
-    ],
-    "license": "PHP License",
-    "name": "pear/net_ping",
-    "support": {
-        "issues": "http://pear.php.net/bugs/search.php?cmd=display&package_name[]=Net_Ping",
-        "source": "https://github.com/pear/Net_Ping"
-    },
-    "type": "library",
     "require": {
         "pear/pear_exception": "*"
     },
