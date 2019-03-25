@@ -26,11 +26,12 @@
             "Net": "./"
         }
     },
-    "description": "More info available on: http://pear.php.net/package/Net_Ping",
+    "description": "OS independent wrapper class for executing ping calls",
+    "homepage": "http://pear.php.net/package/Net_Ping",
     "include-path": [
         "./"
     ],
-    "license": "PHP License",
+    "license": "PHP-3.01",
     "name": "pear/net_ping",
     "support": {
         "issues": "http://pear.php.net/bugs/search.php?cmd=display&package_name[]=Net_Ping",
