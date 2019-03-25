@@ -38,6 +38,9 @@
         "source": "https://github.com/pear/Net_Ping"
     },
     "type": "library",
+    "require": {
+        "pear/pear-core-minimal": "^1.10"
+    },
     "require-dev": {
         "phpunit/phpunit": "*"
     }
